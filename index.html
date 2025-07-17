@@ -288,6 +288,16 @@
 
 <!-- Add Supabase library -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+// Ensure Supabase client is initialized for alla pages
+if (!window.supabase) {
+  // Use environment variables injected at build time
+  window.supabase = supabase.createClient(
+    window.__SUPABASE_URL || 'YOUR_FALLBACK_SUPABASE_URL',
+    window.__SUPABASE_ANON_KEY || 'YOUR_FALLBACK_SUPABASE_ANON_KEY'
+  );
+}
+</script>
 <script src="js/supabase.js" defer></script>
 <script src="js/script.js" defer></script>
 
@@ -320,6 +330,18 @@ function showSignupGuestModal(e) {
 }
 document.getElementById('viewMenuBtn')?.addEventListener('click', showSignupGuestModal);
 document.getElementById('foodMenuNav')?.addEventListener('click', showSignupGuestModal);
+
+// Record guest visit to Supabase before redirecting
+document.querySelector('#signupGuestModal .btn-secondary')?.addEventListener('click', async function(e) {
+  e.preventDefault();
+  try {
+   
+    await window.supabase.from('guest_visits').insert({ visited_at: new Date().toISOString() });
+  } catch (err) {
+    console.error('Failed to record guest visit:', err);
+  }
+  window.location.href = 'html/foodmenu.html';
+});
 </script>
 </body>
 </html>
