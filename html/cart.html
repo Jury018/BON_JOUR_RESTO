@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Cart - Bon Jour Pinoy Restaurant</title>
+  <link rel="shortcut icon" type="image/x-icon" href="../assets/logo.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- FontAwesome CDN -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/cart.css" />
+</head>
+
+<body class="d-flex flex-column min-vh-100 text-dark">
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-danger bg-danger text-white shadow-sm" aria-label="Main Navigation">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center text-white" href="../index.html">
+          <img src="../assets/logo.svg" alt="Bon Jour Pinoy Restaurant Logo" id="logo" />
+          <span class="restaurant-name ms-2 fw-bold">BON JOUR PINOY RESTAURANT™</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link text-white" href="../index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="aboutme.html">About Me</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="foodmenu.html">Food Menu</a></li>
+            <li class="nav-item"><a class="nav-link text-white active" aria-current="page" href="cart.html">My Cart</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="login.html">Log In</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="flex-grow-1">
+    <section id="cart-container" class="container my-5 bg-white p-4 rounded shadow-sm" style="max-width: 800px;">
+      <h2 class="text-danger fw-bold mb-4">My Cart</h2>
+      <ul id="cart-items" class="list-group mb-3"></ul>
+      <div id="cart-summary" class="text-end">
+        <p>Subtotal: <span id="cart-subtotal">₱0</span></p>
+        <p>Total: <span id="cart-total">₱0</span></p>
+        <button class="btn btn-danger me-2" id="proceedToCheckoutBtn">Proceed to Checkout</button>
+        <button id="back-to-menu" class="btn btn-outline-danger">Back to Menu</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-danger text-white text-center py-3 mt-auto shadow-sm">
+    <p class="mb-0">&copy; 2025 Bon Jour Pinoy Restaurant. All rights reserved.</p>
+  </footer>
+
+  <div id="customLoading" style="display:none;">
+    <div class="loading"></div>
+  </div>
+
+  <div class="alert-container">
+    <div class="alert-header">
+      <span class="alert-title"></span>
+      <button class="alert-close">&times;</button>
+    </div>
+    <div class="alert-message"></div>
+    <div class="alert-buttons"></div>
+  </div>
+
+  <!-- Bootstrap JS Bundle CDN (includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/foodmenu.js"></script>
+  <script src="../js/cart.js"></script>
+</body>
+
+</html>

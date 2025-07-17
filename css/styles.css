@@ -1,0 +1,424 @@
+/* Responsive Design for Home Page */
+@media (max-width: 991.98px) {
+  .hero {
+    padding: 40px 0;
+    max-width: 98vw;
+  }
+  .featured-carousel .container,
+  #testimonials .container,
+  #contactForm .container,
+  #aboutUs .container {
+    padding: 1rem;
+    max-width: 98vw;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .hero {
+    padding: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+  .featured-carousel .container,
+  #testimonials .container,
+  #contactForm .container,
+  #aboutUs .container {
+    padding: 0.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+  .glide__slide img.card-img-top {
+    max-width: 90vw;
+    height: auto;
+  }
+  .featured-carousel .row {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .hero {
+    padding: 10px 0;
+    border-radius: 4px;
+    box-shadow: none;
+  }
+  .featured-carousel .container,
+  #testimonials .container,
+  #contactForm .container,
+  #aboutUs .container {
+    padding: 0.3rem;
+    border-radius: 4px;
+    box-shadow: none;
+  }
+  .glide__slide img.card-img-top {
+    max-width: 98vw;
+    margin: 0 auto;
+  }
+  .featured-carousel .row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  footer {
+    font-size: 0.95em;
+    padding: 0.5em 0;
+  }
+  #socialMedia {
+    font-size: 0.95em;
+    padding: 0.5em 0;
+  }
+}
+:root {
+  --primary-color: #ff0000;
+  --background-overlay: rgba(0, 0, 0, 0.4);
+  --font-primary: 'Poppins', sans-serif; /* Modern and clean font */
+  --font-secondary: 'Lora', serif; /* Elegant serif font for headings */
+}
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body */
+body {
+  font-family: var(--font-primary);
+  background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+  background-size: cover;
+  background-color: #f8f9fa;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--background-overlay);
+  z-index: -1;
+}
+
+/* Logo and Restaurant Name */
+#logo {
+  max-width: 80px; /* Adjusted size for better appearance */
+  height: auto;
+  margin-right: 10px;
+  border-radius: 50%; /* Make the logo circular */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+}
+
+#logo:hover {
+  transform: scale(1.1); /* Slight zoom on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+}
+
+.restaurant-name {
+  font-family: 'Montserrat', 'Lora', serif;
+  font-weight: 700;
+  font-size: 2em; /* Slightly larger for better visibility */
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Add subtle text shadow */
+}
+
+/* Responsive Adjustments for Logo and Title */
+@media (max-width: 991.98px) {
+  #logo {
+    max-width: 70px; /* Adjust size for medium screens */
+  }
+
+  .restaurant-name {
+    font-size: 1.5em; /* Adjust font size for medium screens */
+  }
+}
+
+@media (max-width: 767.98px) {
+  #logo {
+    max-width: 60px; /* Adjust size for small tablets */
+  }
+
+  .restaurant-name {
+    font-size: 1.3em; /* Adjust font size for small tablets */
+  }
+}
+
+@media (max-width: 575.98px) {
+  #logo {
+    max-width: 50px; /* Adjust size for mobile screens */
+  }
+
+  .restaurant-name {
+    font-size: 1.1em; /* Adjust font size for mobile screens */
+  }
+}
+
+/* Navbar */
+nav.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  transition: box-shadow 0.3s ease;
+}
+
+nav.navbar.scrolled {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+a:focus,
+button:focus {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Hero Section */
+.hero {
+  max-width: 1200px;
+  margin: 1rem auto;
+  padding: 100px 0;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 0.5rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.5s ease;
+}
+
+.hero h2 {
+  font-family: var(--font-secondary);
+  font-size: 3.5em; /* Larger and more elegant */
+  margin-bottom: 20px;
+  color: var(--primary-color);
+}
+
+.hero p {
+  font-family: var(--font-primary);
+  font-size: 1.3em; /* Slightly larger for readability */
+  margin-bottom: 30px;
+}
+
+/* About Us Section */
+#aboutUs {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#aboutUs:hover {
+  transform: scale(1.02); /* Slight zoom effect */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+}
+
+/* Testimonials Section */
+#testimonials {
+  padding: 2rem 0;
+  background-color: #f8f9fa; /* Light background for contrast */
+}
+
+#testimonials .card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border for better structure */
+  border-radius: 0.5rem; /* Rounded corners for a modern look */
+  padding: 1.5rem;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+#testimonials .card:hover {
+  transform: translateY(-10px); /* Lift the card slightly */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+  background-color: rgba(255, 0, 0, 0.05); /* Light red background on hover */
+}
+
+#testimonials .card p {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1rem;
+  text-align: center;
+  line-height: 1.5;
+}
+
+#testimonials .card h5 {
+  font-family: var(--font-secondary);
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  text-align: center;
+  margin-top: 1rem;
+  transition: color 0.3s ease;
+}
+
+#testimonials .card:hover h5 {
+  color: var(--secondary-color); /* Slightly darker red on hover */
+}
+
+/* Responsive Adjustments for Testimonials */
+@media (max-width: 767.98px) {
+  #testimonials .card {
+    padding: 1rem;
+  }
+
+  #testimonials .card p {
+    font-size: 0.9rem;
+  }
+
+  #testimonials .card h5 {
+    font-size: 1rem;
+  }
+}
+/* Follow Us Section */
+#socialMedia a {
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+#socialMedia a:hover {
+  transform: scale(1.2); /* Slight zoom effect */
+  color: #ffcc00; /* Change color on hover */
+}
+
+/* Featured Dishes Section */
+#featuredDishes .card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+#featuredDishes .card:hover {
+  transform: scale(1.05) translateY(-10px); /* Slight zoom and lift */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
+  background-color: rgba(255, 0, 0, 0.05); /* Subtle red background */
+}
+
+#featuredDishes .card img {
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+#featuredDishes .card:hover img {
+  transform: scale(1); /* Slight zoom on the image */
+  filter: brightness(0.9); /* Slightly darken the image */
+}
+
+#featuredDishes .card h5 {
+  font-family: var(--font-secondary);
+  font-size: 1.5rem; /* Larger and more prominent */
+  transition: color 0.3s ease;
+}
+
+#featuredDishes .card:hover h5 {
+  color: var(--primary-color); /* Highlight the title on hover */
+}
+
+/* Carousel Container */
+#menuContainer {
+  max-width: 1200px;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+  margin: 2rem auto;
+  position: relative;
+  /* display, visibility, opacity, and transform removed to ensure always visible */
+}
+
+#menuContainer[style*="display: block"] {
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1);
+}
+
+#menuContainer .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+#menuContainer .close-btn:hover,
+#menuContainer .close-btn:focus {
+  color: #cc0000;
+}
+
+/* Glide Carousel */
+.glide {
+  border-radius: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.glide__track {
+  overflow: hidden;
+}
+
+.glide__slides {
+  display: flex;
+  gap: 20px; /* Add spacing between slides */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.glide__slide {
+  flex: 0 0 auto; /* Ensure slides do not shrink or grow */
+  width: calc(100% / 3 - 20px); /* Adjust width for 3 slides per view with gap */
+  max-width: 300px; /* Set a maximum width for slides */
+  height: auto; /* Allow height to adjust based on content */
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .glide__slide {
+    width: calc(100% / 2 - 20px); /* 2 slides per view */
+  }
+}
+
+@media (max-width: 768px) {
+  .glide__slide {
+    width: calc(100% - 20px); /* 1 slide per view */
+  }
+}
+
+/* Loading Spinner */
+.loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 4px solid rgba(255, 255, 255, 0.3); /* Light border for contrast */
+  border-top: 4px solid var(--primary-color); /* Use primary color for the spinner */
+  border-radius: 50%;
+  width: 50px; /* Slightly larger for better visibility */
+  height: 50px;
+  animation: spin 0.8s linear infinite; /* Faster spin for a modern feel */
+  z-index: 1000;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Added lazy loading styles for images */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.lazy {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.lazy-loaded {
+  opacity: 1;
+}

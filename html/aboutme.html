@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>ABOUT ME</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- FontAwesome CDN -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/aboutme.css" />
+  <script src="../js/aboutme.js" defer></script>
+</head>
+
+<body class="d-flex flex-column min-vh-100 text-dark">
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-danger bg-danger text-white shadow-sm" aria-label="Main Navigation">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center text-white" href="../index.html">
+          <img src="../assets/logo.svg" alt="Bon Jour Pinoy Restaurant Logo" id="logo" />
+          <span class="restaurant-name ms-2 fw-bold">BON JOUR PINOY RESTAURANT™</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+         <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link text-white" href="../index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link text-white active" aria-current="page" href="aboutme.html">About
+                Me</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="foodmenu.html">Food Menu</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="cart.html">My Cart</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="login.html">Log In</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="about-me">
+      <article>
+        <h2>About Us</h2>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 0px; margin-bottom: 0px;">
+          <div class="aboutme-img-row">
+            <img src="../assets/undraw_best-place_dhzp.svg" alt="3D Store Illustration 1" class="aboutme-img" />
+            <img src="../assets/undraw_best-place_dhzp.svg" alt="3D Store Illustration 3" class="aboutme-img" />
+          </div>
+        </div>
+        <p>Welcome to Bon Jour Pinoy Restaurant <i>a virtual restaurant website page created by Bon Jury Pecaoco, an
+            experienced frontend developer. This website was developed as a showcase and for future inspiration. Please
+            note that all content here is fictional and is not intended for real-world application.</i></p>
+      </article>
+
+      <article>
+        <h3>My Journey</h3>
+        <p>My journey started with a simple mission: to build a first working website that demonstrates how innovative
+          solutions can empower individuals and businesses to grow.</p>
+        <p>This project is dedicated to inspiring those with limited resources but who are passionate about entering the
+          world of programming. Using only a modest setup, I want to show that with commitment and determination, you can
+          achieve anything you set your mind to.</p>
+
+          <p>As of July 2025 I decide to update this website as a fully working website that can be use if needed by small to
+            medium size business. I am proud to say that this website is fully functional and can be used for real-world applications.
+          </p>
+           </article>
+
+      <article>
+        <h3>Looking Ahead</h3>
+        <p>Whether you’re here to visit, leave feedback, or simply explore, I’m always open to new ideas that could
+          further enhance this website’s functionality in the tech world.</p>
+        <p>As I continue my journey as a developer, I am eager to grow my skills, particularly in the future.</p>
+           <h3>Achievements</h3>
+           <p>In a 1 month (September to October) of solo development, I built a full-stack restaurant website entirely on an Android phone. This involved significant code changes with only 1 author (3,691 additions, 1,179 deletions across 58 files) and frequent commits (147 to main) while learning frontend and backend technologies, including Firebase integration. This accomplishment highlights my rapid learning, problem-solving, and dedication to delivering a functional website despite limited resources.
+           </p>
+          
+        <p>You can explore my website for more projects and deployments <a
+            href="https://www.bonfire.base69.me"
+            onclick="showLoading(event)">Portfolio</a>.</p>
+      </article>
+
+      <aside>
+        <h3>Get in Touch!</h3>
+        <p>I'm always happy to connect with fellow developers and tech enthusiasts. Feel free to reach out via:</p>
+        <ul>
+          <li><strong>Email:</strong> bonfirebase69@gmail.com</li>
+
+        </ul>
+      </aside>
+    </section>
+
+    <button onclick="topFunction()" id="myBtn" title="Go to top">Back to Top</button>
+  </main>
+
+  <div id="customAlert" class="custom-alert" style="display: none;">
+    <p id="alertMessage"></p>
+    <button onclick="closeAlert()">Close</button>
+  </div>
+
+  <div id="customLoading" class="custom-loading" style="display: none;">
+    <p>Loading, please wait...</p>
+    <div class="loading"></div>
+  </div>
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
+

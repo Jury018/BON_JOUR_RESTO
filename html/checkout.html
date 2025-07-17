@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout - Bon Jour Pinoy Restaurant</title>
+  <link rel="shortcut icon" type="image/x-icon" href="../assets/logo.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- FontAwesome CDN -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/checkout.css" />
+</head>
+
+<body class="d-flex flex-column min-vh-100 text-dark">
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-danger bg-danger text-white shadow-sm" aria-label="Main Navigation">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center text-white" href="../index.html">
+          <img src="../assets/logo.svg" alt="Bon Jour Pinoy Restaurant Logo" id="logo" />
+          <span class="restaurant-name ms-2 fw-bold">BON JOUR PINOY RESTAURANT™</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+         <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link text-white" href="../index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="aboutme.html">About Me</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="foodmenu.html">Food Menu</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="cart.html">My Cart</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="login.html">Log In</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="flex-grow-1 container my-5" style="max-width: 800px;">
+    <h2 class="text-danger fw-bold mb-4">Checkout</h2>
+    <form id="checkoutForm" novalidate>
+      <h4 class="mb-3">Account</h4>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label for="firstName" class="form-label">First Name</label>
+          <input type="text" class="form-control" id="firstName" required />
+          <div class="invalid-feedback">First name is required.</div>
+        </div>
+        <div class="col-md-6">
+          <label for="lastName" class="form-label">Last Name</label>
+          <input type="text" class="form-control" id="lastName" required />
+          <div class="invalid-feedback">Last name is required.</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" required />
+        <div class="invalid-feedback">Valid email is required.</div>
+      </div>
+      <div class="mb-3">
+        <label for="phoneNumber" class="form-label">Phone Number</label>
+        <input type="tel" class="form-control" id="phoneNumber" pattern="^(09|\+639)\d{9}$" required />
+        <div class="invalid-feedback">Valid phone number is required.</div>
+      </div>
+      <div class="mb-3">
+        <label for="address" class="form-label">Address</label>
+        <input type="text" class="form-control" id="address" required />
+        <div class="invalid-feedback">Address is required.</div>
+      </div>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label for="city" class="form-label">City</label>
+          <input type="text" class="form-control" id="city" required />
+          <div class="invalid-feedback">City is required.</div>
+        </div>
+        <div class="col-md-6">
+          <label for="postalCode" class="form-label">Postal Code</label>
+          <input type="text" class="form-control" id="postalCode" required />
+          <div class="invalid-feedback">Postal code is required.</div>
+        </div>
+      </div>
+
+      <h4 class="mb-3">Payment Details</h4>
+      <div class="mb-3 d-flex flex-wrap gap-3">
+        <div class="form-check form-check-inline payment-option p-3 border rounded" role="radio" tabindex="0" aria-checked="true" aria-label="Credit Card">
+          <input class="form-check-input" type="radio" name="pay" id="bc1" checked />
+          <label class="form-check-label d-flex align-items-center" for="bc1">
+            Credit Card
+          </label>
+        </div>
+        <div class="form-check form-check-inline payment-option p-3 border rounded" role="radio" tabindex="0" aria-checked="false" aria-label="Paypal">
+          <input class="form-check-input" type="radio" name="pay" id="bc2" />
+          <label class="form-check-label d-flex align-items-center" for="bc2">
+            Paypal
+          </label>
+        </div>
+        <div class="form-check form-check-inline payment-option p-3 border rounded" role="radio" tabindex="0" aria-checked="false" aria-label="PayMaya">
+          <input class="form-check-input" type="radio" name="pay" id="bc3" />
+          <label class="form-check-label d-flex align-items-center" for="bc3">
+            Maya Pay
+          </label>
+        </div>
+        <div class="form-check form-check-inline payment-option p-3 border rounded" role="radio" tabindex="0" aria-checked="false" aria-label="GCash">
+          <input class="form-check-input" type="radio" name="pay" id="bc4" />
+          <label class="form-check-label d-flex align-items-center" for="bc4">
+            GCash
+          </label>
+        </div>
+        <div class="form-check form-check-inline payment-option p-3 border rounded" role="radio" tabindex="0" aria-checked="false" aria-label="Cash on Delivery">
+          <input class="form-check-input" type="radio" name="pay" id="bc5" />
+          <label class="form-check-label d-flex align-items-center" for="bc5">
+            Cash on Delivery
+          </label>
+        </div>
+        <div class="form-check form-check-inline payment-option p-3 border rounded" role="radio" tabindex="0" aria-checked="false" aria-label="Apple Pay">
+          <input class="form-check-input" type="radio" name="pay" id="bc6" />
+          <label class="form-check-label d-flex align-items-center" for="bc6">
+            Apple Pay
+          </label>
+        </div>
+      </div>
+
+      <div id="cardDetails" class="mb-3">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <label for="cardNumber" class="form-label">Card Number</label>
+            <input type="tel" class="form-control" id="cardNumber" placeholder="1111-2222-3333-4444" required />
+            <div class="invalid-feedback">Valid card number is required.</div>
+          </div>
+          <div class="col-md-4">
+            <label for="cardCVC" class="form-label">Card CVC</label>
+            <input type="tel" class="form-control" id="cardCVC" placeholder="632" required />
+            <div class="invalid-feedback">Valid CVC is required.</div>
+          </div>
+        </div>
+        <div class="row g-3 mt-2">
+          <div class="col-md-6">
+            <label for="expMonth" class="form-label">Exp Month</label>
+            <input type="number" class="form-control" id="expMonth" placeholder="MM" required />
+            <div class="invalid-feedback">Valid month is required.</div>
+          </div>
+          <div class="col-md-6">
+            <label for="expYear" class="form-label">Exp Year</label>
+            <input type="number" class="form-control" id="expYear" placeholder="YYYY" required />
+            <div class="invalid-feedback">Valid year is required.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="couponCode" class="form-label">Coupon Code</label>
+        <div class="input-group">
+          <input type="text" class="form-control" id="couponCode" />
+          <button type="button" class="btn btn-danger" id="applyCouponButton">Apply</button>
+        </div>
+        <div class="invalid-feedback" id="couponCodeError"></div>
+      </div>
+
+      <div class="order_summary mb-3">
+        <h4 class="text-danger">Order Summary</h4>
+        <ul id="orderItems" class="list-group mb-3"></ul>
+        <div class="total_amount d-flex justify-content-between align-items-center">
+          <label for="totalAmount" class="form-label mb-0">Total Amount:</label>
+          <input type="text" id="totalAmount" class="form-control w-auto" readonly />
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <button type="button" class="btn btn-outline-danger" id="backToCartButton">Back to Cart</button>
+        <button type="submit" class="btn btn-danger" id="payNowButton" disabled>PAY NOW</button>
+      </div>
+    </form>
+  </main>
+
+  <footer class="bg-danger text-white text-center py-3 mt-auto shadow-sm">
+    <p class="mb-0">&copy; 2025 Bon Jour Pinoy Restaurant. All rights reserved.</p>
+  </footer>
+
+  <div id="customLoading" style="display:none;">
+    <div class="loading"></div>
+  </div>
+
+  <div class="alert-container">
+    <div class="alert-header">
+      <span class="alert-title"></span>
+      <button class="alert-close">&times;</button>
+    </div>
+    <div class="alert-message"></div>
+    <div class="alert-buttons"></div>
+  </div>
+
+  <!-- Bootstrap JS Bundle CDN (includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Thank You Modal -->
+  <div class="modal fade" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="thankYouModalLabel">Thank You!</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Thank you for your order!
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/checkout.js"></script>
+</body>
+</html>
