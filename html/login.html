@@ -17,7 +17,9 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
   />
-    <script src="../js/loginscript.js" type="module" defer></script>
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
+  <script src="../js/loginscript.js" type="module" defer></script>
 </head>
 <body class="bg-light d-flex flex-column min-vh-100">
   <header>
@@ -148,9 +150,9 @@
               autocomplete="new-password"
               placeholder="Create a password"
               class="form-control"
+            />
             <div id="passwordStrengthMeter"></div>
-          
-          
+          </div>
           <div class="mb-3">
             <label for="confirmPassword" class="form-label fw-semibold text-danger">
               <i class="fas fa-lock me-2 text-primary"></i>Confirm Password:
@@ -172,6 +174,7 @@
               type="checkbox"
               id="showSignUpPasswords"
               class="form-check-input"
+              onclick="toggleSignUpPasswords()"
             />
             <label for="showSignUpPasswords" class="form-check-label">Show Passwords</label>
           </div>
