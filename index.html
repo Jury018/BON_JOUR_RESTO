@@ -289,12 +289,12 @@
 <!-- Add Supabase library -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
-// Ensure Supabase client is initialized for alla pages
+// Ensure Supabase client is initialized for all pages
 if (!window.supabase) {
-  // Use environment variables injected at build time
+  // Hardcoded Supabase credentials for static hosting
   window.supabase = supabase.createClient(
-    window.__SUPABASE_URL || 'YOUR_FALLBACK_SUPABASE_URL',
-    window.__SUPABASE_ANON_KEY || 'YOUR_FALLBACK_SUPABASE_ANON_KEY'
+    'https://aoejbzrvpcncfjwwuggo.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvZWpienJ2cGNuY2Zqd3d1Z2dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI3NjA4OTMsImV4cCI6MjA2ODMzNjg5M30.RpKOUROFdouWovfvbpwOWMJC2SW-LCcuSMmjoneIKT0'
   );
 }
 </script>
