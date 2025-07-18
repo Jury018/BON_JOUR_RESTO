@@ -12,8 +12,8 @@ function toggleSignUpPasswords() {
 window.toggleSignUpPasswords = toggleSignUpPasswords;
 
 // --- SMART LOGIN SCRIPT ---
-const SUPABASE_URL = window.__SUPABASE_URL || 'YOUR_FALLBACK_SUPABASE_URL';
-const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY || 'YOUR_FALLBACK_SUPABASE_ANON_KEY';
+const SUPABASE_URL = 'https://aoejbzrvpcncfjwwuggo.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvZWpienJ2cGNuY2Zqd3d1Z2dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI3NjA4OTMsImV4cCI6MjA2ODMzNjg5M30.RpKOUROFdouWovfvbpwOWMJC2SW-LCcuSMmjoneIKT0';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let lastSignUpAttempt = 0;
