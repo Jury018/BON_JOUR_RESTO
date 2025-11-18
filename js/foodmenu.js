@@ -1,6 +1,16 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    // Route/session guard: Only allow access if user is logged in or guest flag is set
+    
+  
     async function checkFoodMenuAccess() {
+      // Wait for Supabase auth state to be ready
+      await new Promise(resolve => {
+        const unsub = window.supabase.auth.onAuthStateChange(() => {
+          unsub?.();
+          resolve();
+        });
+        // Fallback: resolve after 500ms if no event
+        setTimeout(resolve, 500);
+      });
       const user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
       const guestFlag = localStorage.getItem('guest_id');
       if (!user && !guestFlag) {
