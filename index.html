@@ -288,6 +288,18 @@
 
 <!-- Add Supabase library -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<!-- Smart user detection and nav update -->
+<script src="js/userSmartGuard.js"></script>
+<script>
+// Ensure Supabase client is initialized for all pages
+if (!window.supabase) {
+  // Hardcoded Supabase credentials for static hosting
+  window.supabase = supabase.createClient(
+    'https://aoejbzrvpcncfjwwuggo.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvZWpienJ2cGNuY2Zqd3d1Z2dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI3NjA4OTMsImV4cCI6MjA2ODMzNjg5M30.RpKOUROFdouWovfvbpwOWMJC2SW-LCcuSMmjoneIKT0'
+  );
+}
+</script>
 <script src="js/supabase.js" defer></script>
 <script src="js/script.js" defer></script>
 
@@ -320,6 +332,18 @@ function showSignupGuestModal(e) {
 }
 document.getElementById('viewMenuBtn')?.addEventListener('click', showSignupGuestModal);
 document.getElementById('foodMenuNav')?.addEventListener('click', showSignupGuestModal);
+
+// Record guest visit to Supabase before redirecting
+document.querySelector('#signupGuestModal .btn-secondary')?.addEventListener('click', async function(e) {
+  e.preventDefault();
+  try {
+   
+    await window.supabase.from('guest_visits').insert({ visited_at: new Date().toISOString() });
+  } catch (err) {
+    console.error('Failed to record guest visit:', err);
+  }
+  window.location.href = 'html/foodmenu.html';
+});
 </script>
 </body>
 </html>

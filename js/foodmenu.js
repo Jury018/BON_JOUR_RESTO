@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   handleResize();
 
   document.body.appendChild(cartIcon);
-  await updateGreeting();
+  // Greeting is set above, no updateGreeting() function needed
   updateCartPopup();
 
   // Add event listeners to nav links to check cart before navigation

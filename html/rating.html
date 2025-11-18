@@ -227,8 +227,8 @@
            setTimeout(() => {
              submitBtn.disabled = false;
              // Redirect to index.html after rating submission
-             window.location.replace('index.html');
-           }, 3000);
+             window.location.replace('../index.html');
+           }, 2000);
          });
        });
   </script>
@@ -237,11 +237,10 @@
     window.addEventListener('pageshow', (event) => {
       if (event.persisted || (window.performance && window.performance.getEntriesByType('navigation')[0].type === 'back_forward')) {
         if (document.referrer.includes('checkout.html')) {
-          window.location.replace('index.html');
+          window.location.replace('../index.html');
         }
       }
     });
   </script>
 </body>
-
 </html>
