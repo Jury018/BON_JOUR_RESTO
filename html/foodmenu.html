@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -400,6 +399,15 @@
       const cartIcon = document.getElementById('cartIcon');
       if (!cartIcon) {
         console.error('Cart assistive icon is not rendering. Please check the foodmenu.js file.');
+      }
+
+      // Scroll to menu section when 'View Our Menu' button is clicked
+      const viewMenuBtn = document.getElementById('viewMenuBtn');
+      const menuSection = document.getElementById('menu');
+      if (viewMenuBtn && menuSection) {
+        viewMenuBtn.addEventListener('click', () => {
+          menuSection.scrollIntoView({ behavior: 'smooth' });
+        });
       }
     });
 
