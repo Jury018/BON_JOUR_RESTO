@@ -118,6 +118,10 @@ function attachEventListeners() {
       showSmartModal({title: 'Google Sign-In', message: `Google sign-in failed: ${error.message}`, type: 'error'});
     }
   });
+    } catch (error) {
+      showSmartModal({title: 'Google Sign-In', message: `Google sign-in failed: ${error.message}`, type: 'error'});
+    }
+  });
 }
 
 async function signIn() {

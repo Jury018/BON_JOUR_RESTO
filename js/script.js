@@ -1,3 +1,23 @@
+// Record guest visit to Supabase before redirecting (for index.html modal)
+document.addEventListener('DOMContentLoaded', () => {
+  const guestBtn = document.querySelector('#signupGuestModal .btn-secondary');
+  if (guestBtn) {
+    guestBtn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      try {
+        const { error } = await window.supabase.from('guest_visits').insert({ visited_at: new Date().toISOString() });
+        if (error) {
+          console.error('Failed to record guest visit:', error);
+        }
+      } catch (err) {
+        console.error('Failed to record guest visit:', err);
+      }
+      setTimeout(() => {
+        window.location.href = 'html/foodmenu.html';
+      }, 300); // short delay to ensure insert
+    });
+  }
+});
 function debounce(func, wait) {
   let timeout;
   return function (...args) {
