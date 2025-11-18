@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
       submitButton.disabled = true;
 
       try {
-        // Use Web3Forms to submit the contact data
+   
         const response = await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           headers: {
@@ -236,14 +236,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await response.json();
         if (result.success) {
           showModalMessage('Your message has been sent successfully!', true);
-          contactForm.reset(); // Clear the form
+          contactForm.reset();
         } else {
           showModalMessage('Failed to send message. Please try again.', false);
         }
       } catch (error) {
         showModalMessage('An unexpected error occurred. Please try again later.', false);
       } finally {
-        submitButton.disabled = false; // Re-enable the submit button
+        submitButton.disabled = false; 
       }
     });
   }
