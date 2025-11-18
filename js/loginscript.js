@@ -118,10 +118,6 @@ function attachEventListeners() {
       showSmartModal({title: 'Google Sign-In', message: `Google sign-in failed: ${error.message}`, type: 'error'});
     }
   });
-    } catch (error) {
-      showSmartModal({title: 'Google Sign-In', message: `Google sign-in failed: ${error.message}`, type: 'error'});
-    }
-  });
 }
 
 async function signIn() {
@@ -173,7 +169,7 @@ async function signUp() {
   try {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) {
-      // Only show rate limit modal if error message contains 'rate limit' or similar
+      
       if (error.message && error.message.toLowerCase().includes('rate limit')) {
         showSmartModal({title: 'Sign Up', message: 'Please wait before trying to sign up again.', type: 'error'});
       } else {
@@ -188,7 +184,7 @@ async function signUp() {
       autoClose: false
     });
     clearFormFields('signUpFormElement');
-    // Do not reload, let user confirm email first
+    
   } catch (error) {
     showSmartModal({title: 'Sign Up', message: `Sign-up failed: ${error.message}`, type: 'error'});
   }

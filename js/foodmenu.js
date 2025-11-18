@@ -1,4 +1,19 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Route/session guard: Only allow access if user is logged in or guest flag is set
+    async function checkFoodMenuAccess() {
+      const user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
+      const guestFlag = localStorage.getItem('guest_id');
+      if (!user && !guestFlag) {
+        alert('Please log in or continue as guest before accessing the food menu.');
+        window.location.replace('../index.html');
+        return false;
+      }
+      return true;
+    }
+
+    if (!await checkFoodMenuAccess()) {
+      return;
+    }
   console.log('foodmenu.js script loaded successfully.');
 
   // Disable cart icon on cart.html page to avoid duplication

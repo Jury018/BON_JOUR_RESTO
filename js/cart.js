@@ -218,26 +218,41 @@ document.addEventListener('DOMContentLoaded', () => {
   greeting.textContent = 'Good day Customer!';
 
   // Cart UI update
-  const updateCartPopup = () => {
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+  const updateCartPopup = async () => {
     const cartItemsList = document.getElementById('cartItems');
     cartItemsList.innerHTML = '';
-
-    if (cartItems.length === 0) {
-      const empty = document.createElement('li');
-      empty.textContent = 'Your cart is empty.';
-      empty.style.textAlign = 'center';
-      empty.style.color = '#666';
-      cartItemsList.appendChild(empty);
-    } else {
-      cartItems.forEach(item => {
-        const listItem = document.createElement('li');
-        listItem.style.padding = '10px';
-        listItem.style.borderBottom = '1px solid #ddd';
-        listItem.textContent = `${item.name} - ₱${item.price} x${item.quantity || 1}`;
-        cartItemsList.appendChild(listItem);
-      });
+    let user = supabase.auth.getUser ? (await supabase.auth.getUser()).data.user : null;
+    let user_id = user ? user.id : null;
+    let guest_id = null;
+    if (!user_id) {
+      guest_id = getOrCreateGuestId();
     }
+    // Get latest order for user/guest
+    let orderQuery = supabase.from('orders').select('id').order('created_at', { ascending: false }).limit(1);
+    if (user_id) {
+      orderQuery = orderQuery.eq('user_id', user_id);
+    } else {
+      orderQuery = orderQuery.eq('guest_id', guest_id);
+    }
+    const { data: orderData, error: orderError } = await orderQuery;
+    if (orderError || !orderData || orderData.length === 0) {
+      cartItemsList.innerHTML = '<li style="text-align:center;color:#666;">Your cart is empty.</li>';
+      return;
+    }
+    const orderId = orderData[0].id;
+    // Get items for this order
+    const { data: items, error: itemsError } = await supabase.from('order_items').select('*').eq('order_id', orderId);
+    if (itemsError || !items || items.length === 0) {
+      cartItemsList.innerHTML = '<li style="text-align:center;color:#666;">Your cart is empty.</li>';
+      return;
+    }
+    items.forEach(item => {
+      const listItem = document.createElement('li');
+      listItem.style.padding = '10px';
+      listItem.style.borderBottom = '1px solid #ddd';
+      listItem.textContent = `${item.item_name} - ₱${item.price} x${item.quantity}`;
+      cartItemsList.appendChild(listItem);
+    });
   };
 
   // Update cart summary totals
@@ -262,6 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const itemName = menuItem.querySelector('h3')?.textContent || 'Unnamed';
       const itemPrice = (menuItem.querySelector('p:nth-of-type(2)')?.textContent || '').replace('₱', '');
 
+      // Add to local cart (for UI only)
       let cart = JSON.parse(localStorage.getItem('cart')) || [];
       const existingIndex = cart.findIndex(item => item.name === itemName);
       if (existingIndex > -1) {
@@ -424,18 +440,51 @@ function proceedToCheckout() {
         </div>
       </div>
     `;
-    // Append modal to body if not already present
     if (!document.getElementById('emptyCartModal')) {
       const div = document.createElement('div');
       div.innerHTML = modalHtml;
       document.body.appendChild(div.firstElementChild);
     }
-    // Show the modal
     const emptyCartModal = new bootstrap.Modal(document.getElementById('emptyCartModal'));
     emptyCartModal.show();
     return;
   }
 
-  // Redirect to checkout page
-  window.location.href = 'checkout.html';
+  // Save order and items to Supabase
+  (async () => {
+    let user = supabase.auth.getUser ? (await supabase.auth.getUser()).data.user : null;
+    let user_id = user ? user.id : null;
+    let guest_id = null;
+    if (!user_id) {
+      guest_id = getOrCreateGuestId();
+    }
+    // Create order
+    const { data: order, error: orderError } = await supabase.from('orders').insert({
+      user_id,
+      guest_id,
+      created_at: new Date().toISOString()
+    }).select();
+    if (orderError || !order || order.length === 0) {
+      alert('Failed to create order.');
+      return;
+    }
+    const orderId = order[0].id;
+    // Insert items
+    const itemsToInsert = cartItems.map(item => ({
+      order_id: orderId,
+      item_name: item.name,
+      quantity: item.quantity || 1,
+      price: item.price || 0,
+      created_at: new Date().toISOString()
+    }));
+    const { error: itemsError } = await supabase.from('order_items').insert(itemsToInsert);
+    if (itemsError) {
+      alert('Failed to save order items.');
+      return;
+    }
+    // Clear local cart
+    localStorage.removeItem('cart');
+    // Redirect to checkout page
+    window.location.href = 'checkout.html';
+  })();
 }

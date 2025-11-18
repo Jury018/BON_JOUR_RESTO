@@ -122,18 +122,80 @@ document.addEventListener('DOMContentLoaded', () => {
       checkoutForm.classList.add('was-validated');
       return;
     }
-    // Here you can add payment processing logic or order submission
 
-    // Show thank you modal
-    thankYouModal.show();
+    // Collect form data
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phoneNumber').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const postalCode = document.getElementById('postalCode').value.trim();
+    const paymentMethod = document.querySelector('input[name="pay"]:checked')?.nextElementSibling?.textContent.trim() || '';
+    const cardNumber = document.getElementById('cardNumber').value.trim();
+    const cardCVC = document.getElementById('cardCVC').value.trim();
+    const expMonth = document.getElementById('expMonth').value.trim();
+    const expYear = document.getElementById('expYear').value.trim();
+    const couponCode = couponCodeInput.value.trim();
+    const totalAmount = totalAmountInput.value.replace('₱','').trim();
 
-    // Clear cart after successful order
-    localStorage.removeItem('cart');
-
-    // Redirect to rating.html after modal is hidden
-    const modalElement = document.getElementById('thankYouModal');
-    modalElement.addEventListener('hidden.bs.modal', () => {
-      window.location.href = 'rating.html';
-    }, { once: true });
+    // Get user/guest
+    (async () => {
+      let user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
+      let user_id = user ? user.id : null;
+      let guest_id = null;
+      if (!user_id) {
+        guest_id = localStorage.getItem('guest_id') || crypto.randomUUID();
+        localStorage.setItem('guest_id', guest_id);
+      }
+      // Get latest order for user/guest
+      let orderQuery = window.supabase.from('orders').select('id').order('created_at', { ascending: false }).limit(1);
+      if (user_id) {
+        orderQuery = orderQuery.eq('user_id', user_id);
+      } else {
+        orderQuery = orderQuery.eq('guest_id', guest_id);
+      }
+      const { data: orderData, error: orderError } = await orderQuery;
+      if (orderError || !orderData || orderData.length === 0) {
+        alert('Order not found. Please go back to cart and try again.');
+        return;
+      }
+      const orderId = orderData[0].id;
+      // Insert checkout data
+      const { error: checkoutError } = await window.supabase.from('checkout').insert({
+        order_id: orderId,
+        customer_first_name: firstName,
+        customer_last_name: lastName,
+        customer_email: email,
+        customer_phone: phone,
+        customer_address: address,
+        customer_city: city,
+        customer_postal_code: postalCode,
+        payment_method: paymentMethod,
+        card_number: cardNumber,
+        card_cvc: cardCVC,
+        card_exp_month: expMonth ? parseInt(expMonth) : null,
+        card_exp_year: expYear ? parseInt(expYear) : null,
+        coupon_code: couponCode,
+        total_amount: totalAmount ? parseFloat(totalAmount) : null,
+        user_id,
+        guest_id,
+        created_at: new Date().toISOString()
+      });
+      if (checkoutError) {
+        alert('Failed to save checkout info: ' + checkoutError.message);
+        return;
+      }
+      // Show thank you modal
+      thankYouModal.show();
+      // Clear cart after successful order
+      localStorage.removeItem('cart');
+      // Redirect to rating.html after modal is hidden
+      const modalElement = document.getElementById('thankYouModal');
+      modalElement.addEventListener('hidden.bs.modal', () => {
+        sessionStorage.setItem('canRate', '1'); // Set flag for rating page access
+        window.location.href = 'rating.html';
+      }, { once: true });
+    })();
   });
 });
