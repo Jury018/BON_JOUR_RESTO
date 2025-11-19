@@ -1,4 +1,45 @@
 document.addEventListener('DOMContentLoaded', async () => {
+      // Fetch menu items from Supabase and update HTML
+      async function syncMenuWithSupabase() {
+        const { data: menuItems, error } = await window.supabase
+          .from('menu')
+          .select('*');
+        if (error) {
+          console.error('Error fetching menu from Supabase:', error.message);
+          return;
+        }
+        if (!menuItems || menuItems.length === 0) return;
+
+        // For each menu item in Supabase, find matching .menu-item in HTML and update
+        menuItems.forEach(item => {
+          // Try to match by name (case-insensitive)
+          const menuItemEls = Array.from(document.querySelectorAll('.menu-item'));
+          const match = menuItemEls.find(el => {
+            const h3 = el.querySelector('h3');
+            return h3 && h3.textContent.trim().toLowerCase() === item.name.trim().toLowerCase();
+          });
+          if (match) {
+            // Update image if available
+            if (item.image_url) {
+              const img = match.querySelector('img');
+              if (img) img.src = item.image_url;
+            }
+            // Update name
+            const h3 = match.querySelector('h3');
+            if (h3) h3.textContent = item.name;
+            // Update description
+            const desc = match.querySelector('p');
+            if (desc) desc.textContent = item.description;
+            // Update price (second p)
+            const priceP = match.querySelectorAll('p')[1];
+            if (priceP) priceP.textContent = `₱${item.price}`;
+          }
+        });
+      }
+
+      // Run sync on page load
+      await syncMenuWithSupabase();
+      // Optionally, rerun sync if you want live updates (e.g., setInterval)
     
   
     async function checkFoodMenuAccess() {
@@ -9,190 +50,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           resolve();
         });
         // Fallback: resolve after 500ms if no event
-        setTimeout(resolve, 500);
-      });
-      const user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
-      const guestFlag = localStorage.getItem('guest_id');
-      if (!user && !guestFlag) {
-        alert('Please log in or continue as guest before accessing the food menu.');
-        window.location.replace('../index.html');
-        return false;
-      }
-      return true;
-    }
-
-    if (!await checkFoodMenuAccess()) {
-      return;
-    }
-  console.log('foodmenu.js script loaded successfully.');
-
-  // Disable cart icon on cart.html page to avoid duplication
-  if (window.location.pathname.endsWith('cart.html')) {
-    console.log('Cart icon creation skipped on cart.html page in foodmenu.js');
-    return;
-  }
-
-  // Create Cart Icon
-  const cartIcon = document.createElement('div');
-  cartIcon.id = 'cartIcon';
-  Object.assign(cartIcon.style, {
-    position: 'fixed',
-    top: '50%',
-    right: '20px',
-    width: '60px',
-    height: '60px',
-    backgroundColor: '#ff0000',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    zIndex: '1000',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-  });
-  cartIcon.innerHTML = '<i class="fas fa-shopping-cart" style="color: white; font-size: 1.8em;"></i>';
-
-  // Tooltip
-  const tooltip = document.createElement('div');
-  tooltip.id = 'cartTooltip';
-  tooltip.textContent = 'View Cart';
-  Object.assign(tooltip.style, {
-    position: 'absolute',
-    bottom: '70px',
-    right: '0',
-    backgroundColor: '#333',
-    color: '#fff',
-    padding: '5px 10px',
-    borderRadius: '5px',
-    fontSize: '0.9em',
-    whiteSpace: 'nowrap',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-    opacity: '0',
-    transition: 'opacity 0.3s ease',
-    pointerEvents: 'none',
-  });
-  cartIcon.appendChild(tooltip);
-
-  cartIcon.addEventListener('mouseover', () => {
-    cartIcon.style.transform = 'scale(1.1)';
-    cartIcon.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.3)';
-    tooltip.style.opacity = '1';
-  });
-
-  cartIcon.addEventListener('mouseout', () => {
-    cartIcon.style.transform = 'scale(1)';
-    cartIcon.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-    tooltip.style.opacity = '0';
-  });
-
-  // Draggable
-  let isDragging = false;
-  let offsetX = 0, offsetY = 0;
-
-  cartIcon.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    offsetX = e.clientX - cartIcon.getBoundingClientRect().left;
-    offsetY = e.clientY - cartIcon.getBoundingClientRect().top;
-    cartIcon.style.transition = 'none';
-    cartPopup.style.transition = 'none'; // Disable transition for smooth following
-    e.preventDefault();
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    const newLeft = e.clientX - offsetX;
-    const newTop = e.clientY - offsetY;
-    cartIcon.style.left = `${newLeft}px`;
-    cartIcon.style.top = `${newTop}px`;
-    cartIcon.style.right = 'auto';
-
-    // Update cart popup position to follow the cart icon
-    const cartIconRect = cartIcon.getBoundingClientRect();
-    cartPopup.style.top = `${cartIconRect.top}px`;
-    cartPopup.style.left = `${cartIconRect.left - cartPopup.offsetWidth}px`;
-  });
-
-  document.addEventListener('mouseup', () => {
-    isDragging = false;
-    cartIcon.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
-    cartPopup.style.transition = 'opacity 0.3s ease, top 0.3s ease, left 0.3s ease'; // Re-enable transition
-  });
-
-  // Ensure the cart popup follows the cart icon dynamically on scroll or swipe
-  window.addEventListener('scroll', () => {
-    const cartIconRect = cartIcon.getBoundingClientRect();
-    cartPopup.style.top = `${cartIconRect.top}px`;
-    cartPopup.style.left = `${cartIconRect.left - cartPopup.offsetWidth}px`;
-  });
-
-  // Ensure the cart popup follows the cart icon dynamically on touch move (swipe)
-  cartIcon.addEventListener('touchmove', (e) => {
-    const touch = e.touches[0];
-    const newLeft = touch.clientX - cartIcon.offsetWidth / 2;
-    const newTop = touch.clientY - cartIcon.offsetHeight / 2;
-    cartIcon.style.left = `${newLeft}px`;
-    cartIcon.style.top = `${newTop}px`;
-    cartIcon.style.right = 'auto';
-
-    // Update cart popup position to follow the cart icon
-    const cartIconRect = cartIcon.getBoundingClientRect();
-    cartPopup.style.top = `${cartIconRect.top}px`;
-    cartPopup.style.left = `${cartIconRect.left - cartPopup.offsetWidth}px`;
-  });
-
-  // Cart Popup
-  const cartPopup = document.createElement('div');
-  cartPopup.id = 'cartPopup';
-  Object.assign(cartPopup.style, {
-    width: '200px',
-    height: 'auto',
-    position: 'absolute',
-    opacity: '0',
-    pointerEvents: 'none',
-    transition: 'opacity 0.3s ease',
-    zIndex: '1000',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-    backgroundColor: '#fff',
-    borderRadius: '8px',
-    padding: '10px',
-  });
-  cartPopup.innerHTML = `
-    <div style="padding: 20px; background-color: #ff0000; color: white; font-size: 1.2em; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
-      <span id="greeting">Hello Guest</span>
-      <div>
-        <button id="maximizeCart" style="background: none; border: none; color: white; font-size: 1em; cursor: pointer; margin-right: 10px;">+</button>
-        <button id="closeCart" style="background: none; border: none; color: white; font-size: 1em; cursor: pointer;">x</button>
-      </div>
-    </div>
-    <div style="padding: 20px; overflow-y: auto; height: calc(100% - 60px);">
-      <ul id="cartItems" style="list-style: none; padding: 0; margin: 0;"></ul>
-    </div>
-  `;
-  document.body.appendChild(cartPopup);
-
-  // Create Proceed to Cart button
-  const proceedToCartBtn = document.createElement('button');
-  proceedToCartBtn.id = 'proceedToCartBtn';
-  proceedToCartBtn.textContent = 'Proceed to Cart';
-  Object.assign(proceedToCartBtn.style, {
-    position: 'fixed',
-    bottom: '80px',
-    right: '20px',
-    padding: '10px 20px',
-    backgroundColor: '#dc3545',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    zIndex: '1001',
-    display: 'none', // Hidden initially
-  });
-  document.body.appendChild(proceedToCartBtn);
-
-  proceedToCartBtn.addEventListener('click', () => {
-    window.location.href = 'cart.html';
+        // Supabase-driven menu and cart logic will be implemented here
+        // ...existing code...
   });
 
   // Function to update the cart popup position relative to the cart icon
@@ -282,56 +141,135 @@ document.addEventListener('DOMContentLoaded', async () => {
   const greeting = document.getElementById('greeting');
   greeting.textContent = 'Good day Customer!';
 
-  // Cart UI update
-  const updateCartPopup = () => {
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+  // Cart UI update from Supabase
+  const updateCartPopup = async () => {
+    // Get user or guest
+    const user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
+    let guestId = null;
+    if (!user) {
+      guestId = sessionStorage.getItem('guest_id');
+      if (!guestId) {
+        guestId = crypto.randomUUID();
+        sessionStorage.setItem('guest_id', guestId);
+      }
+    }
+    // Find order
+    let order;
+    if (user) {
+      const { data: orders } = await window.supabase
+        .from('orders')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      order = orders && orders[0];
+    } else {
+      const { data: orders } = await window.supabase
+        .from('orders')
+        .select('*')
+        .eq('guest_id', guestId)
+        .order('created_at', { ascending: false });
+      order = orders && orders[0];
+    }
+    // Get cart items
+    let cartItems = [];
+    if (order) {
+      const { data: items } = await window.supabase
+        .from('order_items')
+        .select('*')
+        .eq('order_id', order.id);
+      cartItems = items || [];
+    }
     const cartItemsList = document.getElementById('cartItems');
     cartItemsList.innerHTML = '';
-
-    if (cartItems.length === 0) {
+    if (!cartItems || cartItems.length === 0) {
       const empty = document.createElement('li');
       empty.textContent = 'Your cart is empty.';
       empty.style.textAlign = 'center';
       empty.style.color = '#666';
       cartItemsList.appendChild(empty);
-      proceedToCartBtn.style.display = 'none'; // Hide proceed button if cart empty
+      proceedToCartBtn.style.display = 'none';
     } else {
       cartItems.forEach(item => {
         const listItem = document.createElement('li');
         listItem.style.padding = '10px';
         listItem.style.borderBottom = '1px solid #ddd';
-        listItem.textContent = `${item.name} - ₱${item.price}`;
+        listItem.textContent = `${item.item_name} x${item.quantity} - ₱${item.price}`;
         cartItemsList.appendChild(listItem);
       });
-      proceedToCartBtn.style.display = 'block'; // Show proceed button if cart has items
+      proceedToCartBtn.style.display = 'block';
     }
   };
 
-  // Add-to-cart logic
-  document.addEventListener('click', (e) => {
+  // Add-to-cart logic using Supabase
+  document.addEventListener('click', async (e) => {
     if (e.target.classList.contains('add-to-cart')) {
       const menuItem = e.target.closest('.menu-item');
       const itemName = menuItem.querySelector('h3')?.textContent || 'Unnamed';
       const itemPrice = (menuItem.querySelector('p:nth-of-type(2)')?.textContent || '').replace('₱', '');
-
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const existingIndex = cart.findIndex(item => item.name === itemName);
-      if (existingIndex > -1) {
-        cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
-      } else {
-        cart.push({ name: itemName, price: parseFloat(itemPrice) || 0, quantity: 1 });
+      // Get user or guest
+      const user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
+      let guestId = null;
+      if (!user) {
+        guestId = sessionStorage.getItem('guest_id');
+        if (!guestId) {
+          guestId = crypto.randomUUID();
+          sessionStorage.setItem('guest_id', guestId);
+        }
       }
-      localStorage.setItem('cart', JSON.stringify(cart));
-
+      // Find or create order
+      let order;
+      if (user) {
+        const { data: orders } = await window.supabase
+          .from('orders')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        order = orders && orders[0];
+      } else {
+        const { data: orders } = await window.supabase
+          .from('orders')
+          .select('*')
+          .eq('guest_id', guestId)
+          .order('created_at', { ascending: false });
+        order = orders && orders[0];
+      }
+      if (!order) {
+        // Create new order
+        const { data: newOrder, error: orderError } = await window.supabase
+          .from('orders')
+          .insert([{ user_id: user?.id || null, guest_id: guestId, order_data: {}, created_at: new Date().toISOString() }])
+          .select();
+        if (orderError) {
+          alert('Error creating order: ' + orderError.message);
+          return;
+        }
+        order = newOrder && newOrder[0];
+      }
+      // Check if item already exists in order_items
+      const { data: existingItems } = await window.supabase
+        .from('order_items')
+        .select('*')
+        .eq('order_id', order.id)
+        .eq('item_name', itemName);
+      if (existingItems && existingItems.length > 0) {
+        // Update quantity
+        const item = existingItems[0];
+        await window.supabase
+          .from('order_items')
+          .update({ quantity: item.quantity + 1 })
+          .eq('id', item.id);
+      } else {
+        // Insert new item
+        await window.supabase
+          .from('order_items')
+          .insert([{ order_id: order.id, item_name: itemName, quantity: 1, price: parseFloat(itemPrice) || 0, created_at: new Date().toISOString() }]);
+      }
       // Animation
       menuItem.style.animation = 'addToCart 0.5s ease';
       menuItem.addEventListener('animationend', () => {
         menuItem.style.animation = '';
       });
-
-      updateCartPopup();
-
-      // Automatically show the cart popup when an item is added
+      await updateCartPopup();
       cartPopup.classList.add('show');
     }
   });
@@ -367,13 +305,48 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Add event listeners to nav links to check cart before navigation
   const navLinks = document.querySelectorAll('nav a.nav-link');
   navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    link.addEventListener('click', async (e) => {
+      // Get user or guest
+      const user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
+      let guestId = null;
+      if (!user) {
+        guestId = sessionStorage.getItem('guest_id');
+        if (!guestId) {
+          guestId = crypto.randomUUID();
+          sessionStorage.setItem('guest_id', guestId);
+        }
+      }
+      // Find order
+      let order;
+      if (user) {
+        const { data: orders } = await window.supabase
+          .from('orders')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        order = orders && orders[0];
+      } else {
+        const { data: orders } = await window.supabase
+          .from('orders')
+          .select('*')
+          .eq('guest_id', guestId)
+          .order('created_at', { ascending: false });
+        order = orders && orders[0];
+      }
+      // Get cart items
+      let cartItems = [];
+      if (order) {
+        const { data: items } = await window.supabase
+          .from('order_items')
+          .select('*')
+          .eq('order_id', order.id);
+        cartItems = items || [];
+      }
       // Allow navigation if the link is to index.html (Home)
       if (link.getAttribute('href') === 'index.html') {
-        return; // Do not block navigation to Home
+        return;
       }
-      if (cartItems.length === 0) {
+      if (!cartItems || cartItems.length === 0) {
         e.preventDefault();
         // Show modal popup that cart is empty
         const modalHtml = `
@@ -394,21 +367,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
           </div>
         `;
-        // Append modal to body if not already present
         if (!document.getElementById('emptyCartModal')) {
           const div = document.createElement('div');
           div.innerHTML = modalHtml;
           document.body.appendChild(div.firstElementChild);
         }
-        // Show the modal
         const emptyCartModal = new bootstrap.Modal(document.getElementById('emptyCartModal'));
         emptyCartModal.show();
       }
     });
   });
 
-  // Clear cart on page unload
-  window.addEventListener('beforeunload', () => {
-    localStorage.removeItem('cart');
-  });
+  // No localStorage cart to clear on unload
 });
