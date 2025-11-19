@@ -1,3 +1,4 @@
+console.log('foodmenu.js loaded');
 document.addEventListener('DOMContentLoaded', async () => {
   // Wait for Supabase to be initialized
   function waitForSupabase() {
