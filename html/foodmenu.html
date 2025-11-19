@@ -400,13 +400,7 @@
   <script src="../js/cart.js" defer></script>
   <script src="../js/foodmenu.js" defer></script>
   <script>  
-    document.addEventListener('DOMContentLoaded', () => {
-      const cartIcon = document.getElementById('cartIcon');
-      if (!cartIcon) {
-        console.error('Cart assistive icon is not rendering. Please check the foodmenu.js file.');
-      }
-
-      // Scroll to menu section when 'View Our Menu' button is clicked
+    document.addEventListener('DOMContentLoaded', () => {      // Scroll to menu section when 'View Our Menu' button is clicked
       const viewMenuBtn = document.getElementById('viewMenuBtn');
       const menuSection = document.getElementById('menu');
       if (viewMenuBtn && menuSection) {
