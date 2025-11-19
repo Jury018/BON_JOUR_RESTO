@@ -1,4 +1,20 @@
 document.addEventListener('DOMContentLoaded', async () => {
+  // Wait for Supabase to be initialized
+  function waitForSupabase() {
+    return new Promise((resolve) => {
+      const checkSupabase = () => {
+        if (window.supabase && typeof window.supabase.from === 'function') {
+          resolve();
+        } else {
+          setTimeout(checkSupabase, 100);
+        }
+      };
+      checkSupabase();
+    });
+  }
+
+  await waitForSupabase();
+
   // Fetch menu items from Supabase and update HTML
   async function syncMenuWithSupabase() {
     const { data: menuItems, error } = await window.supabase
