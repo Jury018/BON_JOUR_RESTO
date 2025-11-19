@@ -49,57 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let isDragging = false;
   let offsetX = 0, offsetY = 0;
 
-  cartIcon.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    offsetX = e.clientX - cartIcon.getBoundingClientRect().left;
-    offsetY = e.clientY - cartIcon.getBoundingClientRect().top;
-    cartIcon.style.transition = 'none';
-    cartPopup.style.transition = 'none'; // Disable transition for smooth following
-    e.preventDefault();
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    const newLeft = e.clientX - offsetX;
-    const newTop = e.clientY - offsetY;
-    cartIcon.style.left = `${newLeft}px`;
-    cartIcon.style.top = `${newTop}px`;
-    cartIcon.style.right = 'auto';
-
-    // Update cart popup position to follow the cart icon
-    const cartIconRect = cartIcon.getBoundingClientRect();
-    cartPopup.style.top = `${cartIconRect.top}px`;
-    cartPopup.style.left = `${cartIconRect.left - cartPopup.offsetWidth}px`;
-  });
-
-  document.addEventListener('mouseup', () => {
-    isDragging = false;
-    cartIcon.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
-    cartPopup.style.transition = 'opacity 0.3s ease, top 0.3s ease, left 0.3s ease'; // Re-enable transition
-  });
-
-  // Ensure the cart popup follows the cart icon dynamically on scroll or swipe
-  window.addEventListener('scroll', () => {
-    const cartIconRect = cartIcon.getBoundingClientRect();
-    cartPopup.style.top = `${cartIconRect.top}px`;
-    cartPopup.style.left = `${cartIconRect.left - cartPopup.offsetWidth}px`;
-  });
-
-  // Ensure the cart popup follows the cart icon dynamically on touch move (swipe)
-  cartIcon.addEventListener('touchmove', (e) => {
-    const touch = e.touches[0];
-    const newLeft = touch.clientX - cartIcon.offsetWidth / 2;
-    const newTop = touch.clientY - cartIcon.offsetHeight / 2;
-    cartIcon.style.left = `${newLeft}px`;
-    cartIcon.style.top = `${newTop}px`;
-    cartIcon.style.right = 'auto';
-
-    // Update cart popup position to follow the cart icon
-    const cartIconRect = cartIcon.getBoundingClientRect();
-    cartPopup.style.top = `${cartIconRect.top}px`;
-    cartPopup.style.left = `${cartIconRect.left - cartPopup.offsetWidth}px`;
-  });
-
   // Cart Popup
   const cartPopup = document.createElement('div');
   cartPopup.id = 'cartPopup';
@@ -221,14 +170,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const updateCartPopup = async () => {
     const cartItemsList = document.getElementById('cartItems');
     cartItemsList.innerHTML = '';
-    let user = supabase.auth.getUser ? (await supabase.auth.getUser()).data.user : null;
+    let user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
     let user_id = user ? user.id : null;
     let guest_id = null;
     if (!user_id) {
-      guest_id = getOrCreateGuestId();
+      guest_id = sessionStorage.getItem('guest_id');
+      if (!guest_id) {
+        guest_id = crypto.randomUUID();
+        sessionStorage.setItem('guest_id', guest_id);
+      }
     }
     // Get latest order for user/guest
-    let orderQuery = supabase.from('orders').select('id').order('created_at', { ascending: false }).limit(1);
+    let orderQuery = window.supabase.from('orders').select('id').order('created_at', { ascending: false }).limit(1);
     if (user_id) {
       orderQuery = orderQuery.eq('user_id', user_id);
     } else {
@@ -241,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const orderId = orderData[0].id;
     // Get items for this order
-    const { data: items, error: itemsError } = await supabase.from('order_items').select('*').eq('order_id', orderId);
+    const { data: items, error: itemsError } = await window.supabase.from('order_items').select('*').eq('order_id', orderId);
     if (itemsError || !items || items.length === 0) {
       cartItemsList.innerHTML = '<li style="text-align:center;color:#666;">Your cart is empty.</li>';
       return;
@@ -255,50 +208,45 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // Update cart summary totals
-  const updateCartSummary = () => {
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-    const cartSubtotal = document.getElementById('cart-subtotal');
-    const cartTotal = document.getElementById('cart-total');
+  // Expose updateCartPopup globally
+  window.updateCartPopup = updateCartPopup;
 
-    let subtotal = 0;
-    cartItems.forEach(item => {
-      subtotal += (item.price * (item.quantity || 1)) || 0;
-    });
-
-    cartSubtotal.textContent = `₱${subtotal.toFixed(2)}`;
-    cartTotal.textContent = `₱${subtotal.toFixed(2)}`;
-  };
-
-  // Add-to-cart logic
-  document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('add-to-cart')) {
-      const menuItem = e.target.closest('.menu-item');
-      const itemName = menuItem.querySelector('h3')?.textContent || 'Unnamed';
-      const itemPrice = (menuItem.querySelector('p:nth-of-type(2)')?.textContent || '').replace('₱', '');
-
-      // Add to local cart (for UI only)
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const existingIndex = cart.findIndex(item => item.name === itemName);
-      if (existingIndex > -1) {
-        cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
-      } else {
-        cart.push({ name: itemName, price: parseFloat(itemPrice) || 0, quantity: 1 });
+  // Update cart summary totals (for cart.html page)
+  const updateCartSummary = async () => {
+    let user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
+    let user_id = user ? user.id : null;
+    let guest_id = null;
+    if (!user_id) {
+      guest_id = sessionStorage.getItem('guest_id');
+      if (!guest_id) {
+        guest_id = crypto.randomUUID();
+        sessionStorage.setItem('guest_id', guest_id);
       }
-      localStorage.setItem('cart', JSON.stringify(cart));
-
-      // Animation
-      menuItem.style.animation = 'addToCart 0.5s ease';
-      menuItem.addEventListener('animationend', () => {
-        menuItem.style.animation = '';
-      });
-
-      updateCartPopup();
-
-      // Automatically show the cart popup when an item is added
-      cartPopup.classList.add('show');
     }
-  });
+    // Get latest order
+    let orderQuery = window.supabase.from('orders').select('id').order('created_at', { ascending: false }).limit(1);
+    if (user_id) {
+      orderQuery = orderQuery.eq('user_id', user_id);
+    } else {
+      orderQuery = orderQuery.eq('guest_id', guest_id);
+    }
+    const { data: orderData } = await orderQuery;
+    if (!orderData || orderData.length === 0) {
+      document.getElementById('cart-subtotal').textContent = '₱0.00';
+      document.getElementById('cart-total').textContent = '₱0.00';
+      return;
+    }
+    const orderId = orderData[0].id;
+    const { data: items } = await window.supabase.from('order_items').select('*').eq('order_id', orderId);
+    let subtotal = 0;
+    if (items) {
+      items.forEach(item => {
+        subtotal += item.price * item.quantity;
+      });
+    }
+    document.getElementById('cart-subtotal').textContent = `₱${subtotal.toFixed(2)}`;
+    document.getElementById('cart-total').textContent = `₱${subtotal.toFixed(2)}`;
+  };
 
   // Mobile responsive
   const handleResize = () => {
@@ -324,79 +272,98 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartSubtotal = document.getElementById('cart-subtotal');
     const cartTotal = document.getElementById('cart-total');
 
-    function renderCartPageItems() {
+    async function renderCartPageItems() {
       const cartItemsList = document.getElementById('cart-items');
-      const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+      let user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
+      let user_id = user ? user.id : null;
+      let guest_id = null;
+      if (!user_id) {
+        guest_id = sessionStorage.getItem('guest_id');
+        if (!guest_id) {
+          guest_id = crypto.randomUUID();
+          sessionStorage.setItem('guest_id', guest_id);
+        }
+      }
+      // Get latest order
+      let orderQuery = window.supabase.from('orders').select('id').order('created_at', { ascending: false }).limit(1);
+      if (user_id) {
+        orderQuery = orderQuery.eq('user_id', user_id);
+      } else {
+        orderQuery = orderQuery.eq('guest_id', guest_id);
+      }
+      const { data: orderData } = await orderQuery;
+      if (!orderData || orderData.length === 0) {
+        cartItemsList.innerHTML = '<li class="list-group-item text-center text-muted">Your cart is empty.</li>';
+        cartSubtotal.textContent = '₱0.00';
+        cartTotal.textContent = '₱0.00';
+        return;
+      }
+      const orderId = orderData[0].id;
+      const { data: items } = await window.supabase.from('order_items').select('*').eq('order_id', orderId);
+      if (!items || items.length === 0) {
+        cartItemsList.innerHTML = '<li class="list-group-item text-center text-muted">Your cart is empty.</li>';
+        cartSubtotal.textContent = '₱0.00';
+        cartTotal.textContent = '₱0.00';
+        return;
+      }
 
       cartItemsList.innerHTML = '';
+      items.forEach((item, index) => {
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
 
-      if (cartItems.length === 0) {
-        const empty = document.createElement('li');
-        empty.className = 'list-group-item text-center text-muted';
-        empty.textContent = 'Your cart is empty.';
-        cartItemsList.appendChild(empty);
-        cartSubtotal.textContent = '₱0';
-        cartTotal.textContent = '₱0';
-      } else {
-        cartItems.forEach((item, index) => {
-          const listItem = document.createElement('li');
-          listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = item.item_name;
+        nameSpan.style.flex = '2';
 
-          const nameSpan = document.createElement('span');
-          nameSpan.textContent = item.name;
-          nameSpan.style.flex = '2';
-
-          const quantityInput = document.createElement('input');
-          quantityInput.type = 'number';
-          quantityInput.min = '1';
-          quantityInput.value = item.quantity || 1;
-          quantityInput.style.width = '60px';
-          quantityInput.className = 'form-control form-control-sm mx-2';
-          quantityInput.addEventListener('change', (e) => {
-            const newQuantity = parseInt(e.target.value);
-            if (isNaN(newQuantity) || newQuantity < 1) {
-              e.target.value = item.quantity || 1;
-              return;
-            }
-            cartItems[index].quantity = newQuantity;
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            updateCartPopup();
-            updateCartSummary();
-            renderCartPageItems();
-          });
-
-          const priceSpan = document.createElement('span');
-          priceSpan.textContent = `₱${(item.price * (item.quantity || 1)).toFixed(2)}`;
-          priceSpan.style.flex = '1';
-          priceSpan.className = 'text-end';
-
-          const removeBtn = document.createElement('button');
-          removeBtn.className = 'btn btn-sm btn-outline-danger ms-2';
-          removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
-          removeBtn.addEventListener('click', () => {
-            cartItems.splice(index, 1);
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            updateCartPopup();
-            updateCartSummary();
-            renderCartPageItems();
-          });
-
-          listItem.appendChild(nameSpan);
-          listItem.appendChild(quantityInput);
-          listItem.appendChild(priceSpan);
-          listItem.appendChild(removeBtn);
-
-          cartItemsList.appendChild(listItem);
+        const quantityInput = document.createElement('input');
+        quantityInput.type = 'number';
+        quantityInput.min = '1';
+        quantityInput.value = item.quantity;
+        quantityInput.style.width = '60px';
+        quantityInput.className = 'form-control form-control-sm mx-2';
+        quantityInput.addEventListener('change', async (e) => {
+          const newQuantity = parseInt(e.target.value);
+          if (isNaN(newQuantity) || newQuantity < 1) {
+            e.target.value = item.quantity;
+            return;
+          }
+          await window.supabase.from('order_items').update({ quantity: newQuantity }).eq('id', item.id);
+          updateCartPopup();
+          await updateCartSummary();
+          await renderCartPageItems();
         });
 
-        // Update totals
-        let subtotal = 0;
-        cartItems.forEach(item => {
-          subtotal += (item.price * (item.quantity || 1)) || 0;
+        const priceSpan = document.createElement('span');
+        priceSpan.textContent = `₱${(item.price * item.quantity).toFixed(2)}`;
+        priceSpan.style.flex = '1';
+        priceSpan.className = 'text-end';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-sm btn-outline-danger ms-2';
+        removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
+        removeBtn.addEventListener('click', async () => {
+          await window.supabase.from('order_items').delete().eq('id', item.id);
+          updateCartPopup();
+          await updateCartSummary();
+          await renderCartPageItems();
         });
-        cartSubtotal.textContent = `₱${subtotal.toFixed(2)}`;
-        cartTotal.textContent = `₱${subtotal.toFixed(2)}`;
-      }
+
+        listItem.appendChild(nameSpan);
+        listItem.appendChild(quantityInput);
+        listItem.appendChild(priceSpan);
+        listItem.appendChild(removeBtn);
+
+        cartItemsList.appendChild(listItem);
+      });
+
+      // Update totals
+      let subtotal = 0;
+      items.forEach(item => {
+        subtotal += item.price * item.quantity;
+      });
+      cartSubtotal.textContent = `₱${subtotal.toFixed(2)}`;
+      cartTotal.textContent = `₱${subtotal.toFixed(2)}`;
     }
 
     renderCartPageItems();
@@ -418,9 +385,26 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Implement proceedToCheckout function
-function proceedToCheckout() {
-  const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-  if (cartItems.length === 0) {
+async function proceedToCheckout() {
+  let user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
+  let user_id = user ? user.id : null;
+  let guest_id = null;
+  if (!user_id) {
+    guest_id = sessionStorage.getItem('guest_id');
+    if (!guest_id) {
+      guest_id = crypto.randomUUID();
+      sessionStorage.setItem('guest_id', guest_id);
+    }
+  }
+  // Get latest order
+  let orderQuery = window.supabase.from('orders').select('id').order('created_at', { ascending: false }).limit(1);
+  if (user_id) {
+    orderQuery = orderQuery.eq('user_id', user_id);
+  } else {
+    orderQuery = orderQuery.eq('guest_id', guest_id);
+  }
+  const { data: orderData } = await orderQuery;
+  if (!orderData || orderData.length === 0) {
     // Show modal popup that cart is empty
     const modalHtml = `
       <div class="modal fade" id="emptyCartModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
@@ -449,42 +433,6 @@ function proceedToCheckout() {
     emptyCartModal.show();
     return;
   }
-
-  // Save order and items to Supabase
-  (async () => {
-    let user = supabase.auth.getUser ? (await supabase.auth.getUser()).data.user : null;
-    let user_id = user ? user.id : null;
-    let guest_id = null;
-    if (!user_id) {
-      guest_id = getOrCreateGuestId();
-    }
-    // Create order
-    const { data: order, error: orderError } = await supabase.from('orders').insert({
-      user_id,
-      guest_id,
-      created_at: new Date().toISOString()
-    }).select();
-    if (orderError || !order || order.length === 0) {
-      alert('Failed to create order.');
-      return;
-    }
-    const orderId = order[0].id;
-    // Insert items
-    const itemsToInsert = cartItems.map(item => ({
-      order_id: orderId,
-      item_name: item.name,
-      quantity: item.quantity || 1,
-      price: item.price || 0,
-      created_at: new Date().toISOString()
-    }));
-    const { error: itemsError } = await supabase.from('order_items').insert(itemsToInsert);
-    if (itemsError) {
-      alert('Failed to save order items.');
-      return;
-    }
-    // Clear local cart
-    localStorage.removeItem('cart');
-    // Redirect to checkout page
-    window.location.href = 'checkout.html';
-  })();
+  // Redirect to checkout page
+  window.location.href = 'checkout.html';
 }
