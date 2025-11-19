@@ -60,9 +60,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Add-to-cart logic using Supabase
   document.addEventListener('click', async (e) => {
     if (e.target.classList.contains('add-to-cart')) {
+      console.log('Add to Cart clicked');
       const menuItem = e.target.closest('.menu-item');
       const itemName = menuItem.querySelector('h3')?.textContent || 'Unnamed';
       const itemPrice = (menuItem.querySelector('p:nth-of-type(2)')?.textContent || '').replace('₱', '');
+      console.log('Item:', itemName, 'Price:', itemPrice);
       // Get user or guest
       const user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
       let guestId = null;
@@ -73,6 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           sessionStorage.setItem('guest_id', guestId);
         }
       }
+      console.log('User:', user, 'Guest ID:', guestId);
       // Find or create order
       let order;
       if (user) {
@@ -97,10 +100,14 @@ document.addEventListener('DOMContentLoaded', async () => {
           .insert([{ user_id: user?.id || null, guest_id: guestId, order_data: {}, created_at: new Date().toISOString() }])
           .select();
         if (orderError) {
+          console.error('Error creating order:', orderError);
           alert('Error creating order: ' + orderError.message);
           return;
         }
+        console.log('New order created:', newOrder);
         order = newOrder && newOrder[0];
+      } else {
+        console.log('Using existing order:', order);
       }
       // Check if item already exists in order_items
       const { data: existingItems } = await window.supabase
@@ -111,15 +118,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (existingItems && existingItems.length > 0) {
         // Update quantity
         const item = existingItems[0];
-        await window.supabase
+        const { error: updateError } = await window.supabase
           .from('order_items')
           .update({ quantity: item.quantity + 1 })
           .eq('id', item.id);
+        if (updateError) {
+          console.error('Error updating item:', updateError);
+          return;
+        }
+        console.log('Updated item quantity');
       } else {
         // Insert new item
-        await window.supabase
+        const { error: insertError } = await window.supabase
           .from('order_items')
           .insert([{ order_id: order.id, item_name: itemName, quantity: 1, price: parseFloat(itemPrice) || 0, created_at: new Date().toISOString() }]);
+        if (insertError) {
+          console.error('Error inserting item:', insertError);
+          return;
+        }
+        console.log('New item inserted');
       }
       // Animation
       menuItem.style.animation = 'addToCart 0.5s ease';
