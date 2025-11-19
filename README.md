@@ -1,8 +1,11 @@
 
-# BON JOUR PINOY RESTAURANT
+# BON JOUR PINOY RESTAURANT v2
 
 ## Overview
 Modern Filipino restaurant web app featuring online menu, cart, authentication, guest analytics, and feedback system.
+
+## Notice
+**This website is still under development and will undergo future upgrades and changes. As technology evolves rapidly, expect ongoing updates and improvements. The goal of this website is to grow continuously over the long term. It is open to the public, and we welcome any suggestions or contributions for improvements or additional features.**
 
 ## Features
 - Responsive design with Bootstrap 5
@@ -42,3 +45,5 @@ Modern Filipino restaurant web app featuring online menu, cart, authentication, 
 
 ## License
 MIT
+
+
