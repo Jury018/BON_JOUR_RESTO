@@ -42,7 +42,21 @@
   </header>
 
   <main>
-    <section class="hero text-center mx-auto my-4" aria-labelledby="hero-title" style="max-width:1200px;padding:100px 0;background-color:rgba(255,255,255,0.95);border-radius:0.5rem;box-shadow:0 0 15px rgba(0,0,0,0.3);">
+
+    <div style="width: 100%; background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; padding: 15px 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); position: relative; z-index: 10;">
+      <div style="display: flex; align-items: center; justify-content: center; max-width: 1200px; margin: 0 auto; position: relative;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 1.5em; margin-right: 15px; animation: pulse 2s infinite;"></i>
+        <span style="font-size: 1.1em; font-weight: 500; text-align: center;"><strong>Notice:</strong> Adding orders is still under development. Functionality may not work as expected.</span>
+      </div>
+      <style>
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+          100% { transform: scale(1); }
+        }
+      </style>
+    </div>
+    <section class="hero text-center mx-auto my-4" aria-labelledby="hero-title" style="max-width:1200px;padding:100px 0;background-color:rgba(255,255,255,0.95);border-radius:0.5rem;box-shadow:0 0 15px rgba(33, 33, 33, 0.3);">
       <h2 id="hero-title" class="display-4 text-danger mb-3 fw-bold" style="font-family:'Lora',serif;font-size:3.5em;">Welcome to Bon Jour Pinoy Restaurant!</h2>
       <p class="lead mb-4" style="font-size:1.3em;">Experience the taste of Filipino cuisine with a Homemade twist.</p>
       <button type="button" class="btn btn-danger btn-lg me-3 shadow-sm fw-semibold" id="viewMenuBtn">View Our Menu</button>
