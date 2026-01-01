@@ -273,12 +273,12 @@
 
   <section id="socialMedia" class="text-center py-4 bg-danger text-white">
     <h5>Follow US</h5>
-    <a href="https://facebook.com" class="text-white me-3"><i class="fab fa-facebook fa-2x"></i></a>
-    <a href="https://instagram.com" class="text-white me-3"><i class="fab fa-instagram fa-2x"></i></a>
-    <a href="https://twitter.com" class="text-white me-3"><i class="fab fa-linkedin-in fa-2x"></i></a>
+    <a href="https://www.facebook.com/share/17naEFcdsh/" class="text-white me-3"><i class="fab fa-facebook fa-2x"></i></a>
+    <a href="https://www.instagram.com/bonfire404.io?igsh=aGpqMHV2ejY4ZW5u" class="text-white me-3"><i class="fab fa-instagram fa-2x"></i></a>
+    <a href="https://www.portfolio.base69.me/company" class="text-white me-3"><i class="fas fa-globe fa-2x"></i></a>
   </section>
   <footer class="bg-danger text-white text-center py-3 mt-auto shadow-sm">
-    <p class="mb-0">&copy; 2025 on Jour Pinoy Restaurant. All rights reserved.</p>
+    <p class="mb-0">&copy; <span id="currentYear"></span> Bon Jour Pinoy Restaurant. All rights reserved.</p>
   </footer>
 
   <div id="customLoading" class="loading" style="display: none;"></div>
@@ -288,6 +288,7 @@
 
 <!-- Add Supabase library -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 <script>
 if (!window.supabase) {
  
@@ -301,6 +302,11 @@ if (!window.supabase) {
 
 <!-- Glide.js JS -->
 <script src="https://cdn.jsdelivr.net/npm/@glidejs/glide/dist/glide.min.js"></script>
+
+<!-- Script to set dynamic year -->
+<script>
+document.getElementById('currentYear').textContent = new Date().getFullYear();
+</script>
 
 <!-- Modal for sign up or guest -->
 <div class="modal fade" id="signupGuestModal" tabindex="-1" aria-labelledby="signupGuestModalLabel" aria-hidden="true">
