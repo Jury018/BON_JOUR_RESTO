@@ -2,13 +2,13 @@ export default function middleware(request) {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
-  // Paths accessible by both guests and authenticated users
+ 
   const guestPaths = [
     '/html/foodmenu.html',
     '/html/cart.html'
   ];
 
-  // Paths strictly requiring full authentication (no guests)
+ 
   const fullAuthPaths = [
     '/html/checkout.html',
     '/html/rating.html'

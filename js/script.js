@@ -58,32 +58,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   glide.mount();
 
-  // Ensure all slides have the same height for a uniform look
-  const slides = document.querySelectorAll('.glide__slide');
-  let maxHeight = 0;
-
-  slides.forEach((slide) => {
-    const slideHeight = slide.offsetHeight;
-    if (slideHeight > maxHeight) {
-      maxHeight = slideHeight;
-    }
-  });
-
-  slides.forEach((slide) => {
-    slide.style.height = `${maxHeight}px`;
-  });
-
-  // Adjust slide width dynamically for better responsiveness
-  const glideSlides = document.querySelector('.glide__slides');
-  const updateSlideWidth = () => {
-    const slideWidth = glideSlides.offsetWidth / glide.settings.perView - glide.settings.gap;
-    slides.forEach((slide) => {
-      slide.style.width = `${slideWidth}px`;
+  // Optimized height normalization
+  const normalizeHeights = () => {
+    const slides = document.querySelectorAll('.glide__slide');
+    slides.forEach(s => s.style.height = 'auto'); // Reset
+    let maxHeight = 0;
+    slides.forEach(slide => {
+      if (slide.offsetHeight > maxHeight) maxHeight = slide.offsetHeight;
     });
+    slides.forEach(slide => slide.style.height = `${maxHeight}px`);
   };
 
-  window.addEventListener('resize', debounce(updateSlideWidth, 200));
-  updateSlideWidth();
+  window.addEventListener('load', normalizeHeights);
+  window.addEventListener('resize', debounce(normalizeHeights, 200));
 });
 
 // Lazy loading for images

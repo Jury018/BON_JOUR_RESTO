@@ -10,12 +10,15 @@ async function loadMenu() {
   Object.values(categories).forEach(container => {
     if (container) {
       container.innerHTML = Array(3).fill(`
-        <div class="menu-item skeleton-container">
-          <div class="skeleton skeleton-img"></div>
-          <div class="skeleton skeleton-title mx-auto"></div>
-          <div class="skeleton skeleton-text"></div>
-          <div class="skeleton skeleton-text" style="width: 50%; margin: 0 auto 1rem;"></div>
-          <div class="skeleton skeleton-btn mx-auto"></div>
+        <div class="menu-item">
+          <div class="skeleton" style="height: 240px; width: 100%;"></div>
+          <div class="menu-item-content">
+            <div class="skeleton" style="height: 24px; width: 60%; margin-bottom: 1rem;"></div>
+            <div class="skeleton" style="height: 16px; width: 90%; margin-bottom: 0.5rem;"></div>
+            <div class="skeleton" style="height: 16px; width: 80%; margin-bottom: 1.5rem;"></div>
+            <div class="skeleton" style="height: 28px; width: 40%; margin-bottom: 1.5rem;"></div>
+            <div class="skeleton" style="height: 48px; width: 100%; border-radius: 12px;"></div>
+          </div>
         </div>
       `).join('');
     }
@@ -37,10 +40,14 @@ async function loadMenu() {
         const itemHtml = `
           <div class="menu-item fade-in" data-id="${item.id}">
             <img src="${item.image}" alt="${item.name}" loading="lazy">
-            <h3>${item.name}</h3>
-            <p>${item.description}</p>
-            <p>₱${item.price}</p>
-            <button class="add-to-cart" data-name="${item.name}" data-price="${item.price}">Add to Cart</button>
+            <div class="menu-item-content">
+              <h3>${item.name}</h3>
+              <p>${item.description}</p>
+              <div class="menu-price">₱${item.price}</div>
+              <button class="add-to-cart" data-name="${item.name}" data-price="${item.price}">
+                <i class="fas fa-shopping-basket"></i> Add to Cart
+              </button>
+            </div>
           </div>
         `;
         container.innerHTML += itemHtml;

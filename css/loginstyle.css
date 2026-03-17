@@ -5,6 +5,10 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), url('../assets/filipino_cuisine_hero_bg_1773753017240.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 /* Modal styles */
@@ -58,7 +62,8 @@ input:valid {
   perspective: 1000px;
   width: 100%;
   max-width: 450px;
-  margin: 20px;
+  margin: 1.5rem auto;
+  padding: 0 15px;
 }
 
 .auth-card {
@@ -194,9 +199,12 @@ input:valid {
 /* Responsive adjustments */
 @media (max-width: 576px) {
   .auth-card {
-    padding: 30px 20px;
-    margin: 10px;
-    border-radius: 15px;
+    padding: 2rem 1.25rem;
+    margin: 0;
+    border-radius: 16px;
+  }
+  .auth-title {
+    font-size: 1.5rem;
   }
 }
 

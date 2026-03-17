@@ -48,22 +48,22 @@
   <header>
     <nav class="navbar navbar-expand-lg navbar-danger bg-danger text-white shadow-sm" aria-label="Main Navigation">
       <div class="container">
-        <a class="navbar-brand d-flex align-items-center text-white" href="index.html">
-          <img src="assets/logo.svg" alt="Bon Jour Pinoy Restaurant Logo" id="logo" />
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+          <img src="assets/logo.svg" alt="Logo" id="logo" />
           <span class="restaurant-name ms-2 fw-bold">BON JOUR PINOY RESTAURANT™</span>
         </a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
           aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <i class="fas fa-bars text-white"></i>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link text-white active" aria-current="page" href="index.html">Home</a>
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.html">Home</a>
             </li>
-            <li class="nav-item"><a class="nav-link text-white" href="html/aboutme.html">About Me</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="#" id="foodMenuNav">Food Menu</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="cart.html">My Cart</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="html/login.html">Log In</a></li>
+            <li class="nav-item"><a class="nav-link" href="html/aboutme.html">About Me</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" id="foodMenuNav">Food Menu</a></li>
+            <li class="nav-item"><a class="nav-link" href="cart.html">My Cart</a></li>
+            <li class="nav-item"><a class="nav-link" href="html/login.html">Log In</a></li>
           </ul>
         </div>
       </div>
@@ -71,11 +71,19 @@
   </header>
 
   <main class="flex-grow-1">
-    <section class="hero text-center mx-auto my-4" aria-labelledby="hero-title">
-      <h2 id="hero-title" class="display-4 text-danger mb-3 fw-bold">Welcome to Bon Jour Pinoy Restaurant!</h2>
-      <p class="lead mb-4">Experience the taste of Filipino cuisine with a Homemade twist.</p>
-      <button type="button" class="btn btn-danger btn-lg me-3 shadow-sm fw-semibold" id="viewMenuBtn">View Our
-        Menu</button>
+    <section class="hero text-center" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <h1 id="hero-title" class="display-1 fw-bold">Unforgettable <span class="text-danger">Filipino</span> Flavors</h1>
+        <p class="lead mb-4">Experience the authentic taste of the Philippines with a premium, homemade twist that brings heritage to your plate.</p>
+        <div class="d-flex justify-content-center gap-3">
+          <button type="button" class="btn btn-danger btn-lg px-5 py-3 rounded-pill shadow-lg fw-bold" id="viewMenuBtn">
+            Explore Menu <i class="fas fa-utensils ms-2"></i>
+          </button>
+          <a href="html/login.html" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-bold">
+            Sign In
+          </a>
+        </div>
+      </div>
     </section>
 
     <!-- Carousel markup -->
@@ -146,14 +154,49 @@
       </div>
     </section>
 
-    <section id="aboutUs" class="bg-light py-5">
+    <section id="aboutUs" class="py-5 overflow-hidden">
       <div class="container">
-        <h3 class="text-center text-danger fw-bold mb-4">About Us</h3>
-        <p class="text-center text-muted">
-          Bon Jour Pinoy Restaurant is dedicated to bringing authentic Filipino cuisine to your table.
-          With a passion for traditional recipes and a touch of modern flair, we aim to provide an unforgettable dining
-          experience.
-        </p>
+        <div class="row align-items-center g-5">
+          <div class="col-lg-6">
+            <h6 class="text-danger fw-bold text-uppercase mb-3">Our Story</h6>
+            <h2 class="display-5 fw-bold mb-4">Spanish Elegance Meets <span class="text-danger">Filipino Soul</span></h2>
+            <p class="lead text-muted mb-4">
+              Founded on the pillars of heritage and quality, Bon Jour Pinoy Restaurant is a culinary sanctuary where traditional recipes are honored and elevated.
+            </p>
+            <p class="text-muted mb-5">
+              Every dish is a tribute to the rich tapestry of Filipino culture, prepared with the finest local ingredients and a touch of modern sophistication. We invite you to experience a dining journey that feels like home, yet surprises the palate.
+            </p>
+            <div class="row g-4 mb-5">
+              <div class="col-sm-6">
+                <div class="d-flex align-items-center">
+                  <div class="flex-shrink-0 bg-danger text-white rounded-circle p-3 me-3">
+                    <i class="fas fa-heart fa-lg"></i>
+                  </div>
+                  <h6 class="mb-0 fw-bold">Cooked with Love</h6>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="d-flex align-items-center">
+                  <div class="flex-shrink-0 bg-danger text-white rounded-circle p-3 me-3">
+                    <i class="fas fa-leaf fa-lg"></i>
+                  </div>
+                  <h6 class="mb-0 fw-bold">Fresh Ingredients</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="position-relative">
+              <img src="assets/premium_restaurant_interior_1773753040766.png" alt="Restaurant Interior" class="img-fluid rounded-4 shadow-lg" />
+              <div class="position-absolute bottom-0 start-0 translate-middle-x ms-5 mb-5 d-none d-md-block">
+                <div class="bg-white p-4 rounded-4 shadow-lg border-start border-danger border-5">
+                  <h3 class="fw-bold text-danger mb-1">15+</h3>
+                  <p class="small text-muted mb-0">Years of Excellence</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -214,24 +257,61 @@
 
     <section id="testimonials" class="bg-light py-5">
       <div class="container">
-        <h3 class="text-center text-danger fw-bold mb-4">What Our Customers Say</h3>
+        <div class="text-center mb-5">
+          <h6 class="text-danger fw-bold text-uppercase">Guest Reviews</h6>
+          <h2 class="display-6 fw-bold">Voices of Excellence</h2>
+          <div class="mx-auto bg-danger" style="width: 50px; height: 3px;"></div>
+        </div>
         <div class="row g-4">
           <div class="col-md-4">
-            <div class="card shadow-sm p-3">
-              <p class="text-muted">"The food was amazing! I loved the Pork Sinigang."</p>
-              <h5 class="text-danger">- Lucio Tan</h5>
+            <div class="card h-100 shadow-sm border-0">
+              <div class="card-body p-4">
+                <div class="text-warning mb-3">
+                  <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="text-muted mb-4 opacity-75">"The culinary experience at Bon Jour Pinoy Restaurant is unparalleled. Their Pork Sinigang perfectly captures the authentic, heart-warming essence of our heritage."</p>
+                <div class="d-flex align-items-center">
+                  <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; font-weight: bold;">LT</div>
+                  <div>
+                    <h6 class="mb-0 fw-bold">Lucio Tan</h6>
+                    <small class="text-danger fw-semibold">Gourmet Enthusiast</small>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="card shadow-sm p-3">
-              <p class="text-muted">"Half Human Half Adobo. Highly recommend!"</p>
-              <h5 class="text-danger">- Rastaman</h5>
+            <div class="card h-100 shadow-sm border-0">
+              <div class="card-body p-4">
+                <div class="text-warning mb-3">
+                  <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="text-muted mb-4 opacity-75">"A masterful blend of tradition and modern sophistication. Their signature Adobo is a testament to the rich tapestry of Filipino cuisine. Truly world-class."</p>
+                <div class="d-flex align-items-center">
+                  <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; font-weight: bold;">RM</div>
+                  <div>
+                    <h6 class="mb-0 fw-bold">Rastaman</h6>
+                    <small class="text-danger fw-semibold">Local Food Advocate</small>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="card shadow-sm p-3">
-              <p class="text-muted">"Ansarap, shuta!!"</p>
-              <h5 class="text-danger">- Mr. Apido</h5>
+            <div class="card h-100 shadow-sm border-0">
+              <div class="card-body p-4">
+                <div class="text-warning mb-3">
+                  <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="text-muted mb-4 opacity-75">"Exquisite flavors paired with impeccable presentation. Every dish served here tells a profound story of passion and culinary excellence."</p>
+                <div class="d-flex align-items-center">
+                  <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; font-weight: bold;">MA</div>
+                  <div>
+                    <h6 class="mb-0 fw-bold">Mr. Apido</h6>
+                    <small class="text-danger fw-semibold">Culinary Critic</small>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -239,41 +319,35 @@
     </section>
 
     <!-- Contact Form Section -->
-    <section id="contactForm" class="bg-light py-5">
-      <div class="container">
-        <h3 class="text-center text-danger fw-bold mb-4">Contact Us</h3>
-        <form class="row g-3">
-          <div class="col-md-6">
-            <label for="name" class="form-label fw-semibold">Name</label>
-            <input type="text" class="form-control" id="name" placeholder="Your Name" required />
-          </div>
-          <div class="col-md-6">
-            <label for="email" class="form-label fw-semibold">Email</label>
-            <input type="email" class="form-control" id="email" placeholder="Your Email" required />
-          </div>
-          <div class="col-12">
-            <label for="message" class="form-label fw-semibold">Message</label>
-            <textarea class="form-control" id="message" rows="5" placeholder="Your Message" required></textarea>
-          </div>
-          <div class="col-12 text-center">
-            <button type="submit" class="btn btn-danger btn-lg shadow-sm fw-semibold">Send Message</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Modal for Success/Error Messages -->
-      <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="messageModalLabel">Message Status</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p id="modalMessage"></p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <section id="contactSection" class="py-5 bg-dark text-white parallax-bg" style="background-image: url('assets/filipino_cuisine_hero_bg_1773753017240.png');">
+      <div class="container position-relative z-index-1">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="bg-white text-dark p-5 rounded-4 shadow-lg">
+              <div class="text-center mb-5">
+                <h6 class="text-danger fw-bold text-uppercase">Get in Touch</h6>
+                <h2 class="display-6 fw-bold">Reserve a Table or Ask Away</h2>
+                <div class="mx-auto bg-danger" style="width: 50px; height: 3px;"></div>
+              </div>
+              <form id="contactForm" class="row g-4">
+                <div class="col-md-6 text-start">
+                  <label for="name" class="form-label fw-bold small text-uppercase">Full Name</label>
+                  <input type="text" class="form-control form-control-lg border-0 bg-light" id="name" placeholder="John Doe" required />
+                </div>
+                <div class="col-md-6 text-start">
+                  <label for="email" class="form-label fw-bold small text-uppercase">Email Address</label>
+                  <input type="email" class="form-control form-control-lg border-0 bg-light" id="email" placeholder="john@example.com" required />
+                </div>
+                <div class="col-12 text-start">
+                  <label for="message" class="form-label fw-bold small text-uppercase">Your Message</label>
+                  <textarea class="form-control form-control-lg border-0 bg-light" id="message" rows="5" placeholder="How can we help you?" required></textarea>
+                </div>
+                <div class="col-12 text-center pt-3">
+                  <button type="submit" class="btn btn-danger btn-lg px-5 py-3 rounded-pill shadow-lg fw-bold">
+                    Send Message <i class="fas fa-paper-plane ms-2"></i>
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -287,7 +361,7 @@
         class="fab fa-facebook fa-2x"></i></a>
     <a href="https://www.instagram.com/bonfire404.io?igsh=aGpqMHV2ejY4ZW5u" class="text-white me-3"><i
         class="fab fa-instagram fa-2x"></i></a>
-    <a href="https://www.portfolio.base69.me/company" class="text-white me-3"><i class="fas fa-globe fa-2x"></i></a>
+    <a href="https://bonfire.base69.studio/" class="text-white me-3"><i class="fas fa-globe fa-2x"></i></a>
   </section>
   <footer class="bg-danger text-white text-center py-3 mt-auto shadow-sm">
     <p class="mb-0">&copy; <span id="currentYear"></span> Bon Jour Pinoy Restaurant. All rights reserved.</p>

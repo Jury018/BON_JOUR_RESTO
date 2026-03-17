@@ -17,17 +17,40 @@ const FirebaseBridge = {
     }
   },
 
-  // Pull Cart from Firebase
+  // Pull Cart from Firebase and merge with local items
   async pullCartFromFirebase() {
     const user = firebase.auth().currentUser;
     if (user) {
       try {
         const snapshot = await firebase.database().ref(`carts/${user.uid}`).once('value');
-        const cart = snapshot.val() || [];
-        localStorage.setItem('resto_cart', JSON.stringify(cart));
-        return cart;
+        const cloudCart = snapshot.val() || [];
+        const localCart = JSON.parse(localStorage.getItem('resto_cart') || '[]');
+
+        // Merge Logic: Use Cloud Cart but add any local items that aren't in cloud
+        // This handles the "Add to cart then login" scenario
+        let finalCart = [...cloudCart];
+        
+        localCart.forEach(localItem => {
+          const exists = finalCart.find(cloudItem => cloudItem.name === localItem.name);
+          if (!exists) {
+            finalCart.push(localItem);
+          }
+        });
+
+        localStorage.setItem('resto_cart', JSON.stringify(finalCart));
+        
+        // If we merged new local items, sync back to Firebase immediately
+        if (localCart.length > 0 && finalCart.length > cloudCart.length) {
+            this.syncCartToFirebase(finalCart);
+        }
+
+        return finalCart;
       } catch (e) {
-        console.error("Firebase Pull Error:", e);
+        if (e.message && e.message.includes('permission_denied')) {
+          console.warn("Firebase Access Denied: Please update your Realtime Database Rules in Firebase Console to allow users to read/write their own /carts/ node.");
+        } else {
+          console.error("Firebase Pull Error:", e);
+        }
         return JSON.parse(localStorage.getItem('resto_cart') || '[]');
       }
     }

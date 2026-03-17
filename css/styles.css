@@ -1,190 +1,277 @@
 /* Responsive Design for Home Page */
 @media (max-width: 991.98px) {
   .hero {
-    padding: 40px 0;
-    max-width: 98vw;
+    padding: 60px 20px;
+    max-width: 95vw;
   }
   .featured-carousel .container,
   #testimonials .container,
   #contactForm .container,
   #aboutUs .container {
-    padding: 1rem;
-    max-width: 98vw;
+    padding: 2rem 1.5rem;
+    max-width: 95vw;
   }
 }
 
 @media (max-width: 767.98px) {
   .hero {
-    padding: 20px 0;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 40px 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .hero h2 {
+    font-size: 2.2rem !important;
+  }
+  .hero p {
+    font-size: 1.1rem !important;
   }
   .featured-carousel .container,
   #testimonials .container,
   #contactForm .container,
   #aboutUs .container {
-    padding: 0.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
   .glide__slide img.card-img-top {
-    max-width: 90vw;
-    height: auto;
+    height: 180px;
+    object-fit: cover;
   }
   .featured-carousel .row {
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
   }
 }
 
 @media (max-width: 575.98px) {
   .hero {
-    padding: 10px 0;
-    border-radius: 4px;
-    box-shadow: none;
+    padding: 30px 10px;
+    margin: 0.5rem auto;
+  }
+  .hero h2 {
+    font-size: 1.8rem !important;
+  }
+  .hero p {
+    font-size: 1rem !important;
   }
   .featured-carousel .container,
   #testimonials .container,
   #contactForm .container,
   #aboutUs .container {
-    padding: 0.3rem;
-    border-radius: 4px;
-    box-shadow: none;
+    padding: 1rem 0.5rem;
+    border-radius: 8px;
+  }
+  .glide__slide {
+    width: 100% !important;
   }
   .glide__slide img.card-img-top {
-    max-width: 98vw;
-    margin: 0 auto;
-  }
-  .featured-carousel .row {
-    flex-direction: column;
-    gap: 8px;
+    height: 160px;
   }
   footer {
-    font-size: 0.95em;
-    padding: 0.5em 0;
+    font-size: 0.85em;
+    padding: 1.5rem 0.5rem;
   }
   #socialMedia {
-    font-size: 0.95em;
-    padding: 0.5em 0;
+    padding: 1rem 0.5rem;
+  }
+  #socialMedia i {
+    font-size: 1.5rem;
   }
 }
 :root {
-  --primary-color: #ff0000;
-  --background-overlay: rgba(0, 0, 0, 0.4);
-  --font-primary: 'Poppins', sans-serif; /* Modern and clean font */
-  --font-secondary: 'Lora', serif; /* Elegant serif font for headings */
+  --primary-color: #e63946;
+  --secondary-color: #1d3557;
+  --accent-color: #f1faee;
+  --bg-dark: #0f172a;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --font-primary: 'Montserrat', sans-serif;
+  --font-secondary: 'Roboto', sans-serif;
+  --premium-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-/* Reset */
+/* Reset and Base */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body */
 body {
   font-family: var(--font-primary);
-  background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
-  background-size: cover;
-  background-color: #f8f9fa;
-  color: #333;
+  background-color: #f8fafc;
+  color: #1e293b;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  position: relative;
+  overflow-x: hidden;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--background-overlay);
-  z-index: -1;
+/* Stunning Background for specific sections */
+.parallax-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 /* Logo and Restaurant Name */
 #logo {
-  max-width: 80px; /* Adjusted size for better appearance */
-  height: auto;
-  margin-right: 10px;
-  border-radius: 50%; /* Make the logo circular */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+  width: 65px; /* Increased size */
+  height: 65px;
+  object-fit: contain;
+  margin-right: 12px;
+  transition: transform 0.3s ease;
 }
 
 #logo:hover {
-  transform: scale(1.1); /* Slight zoom on hover */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+  transform: scale(1.1);
 }
 
 .restaurant-name {
-  font-family: 'Montserrat', 'Lora', serif;
-  font-weight: 700;
-  font-size: 1.8em; 
+  font-family: var(--font-primary);
+  font-weight: 800;
+  font-size: 1.4rem; 
+  letter-spacing: -1px;
   color: white;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  transition: font-size 0.3s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Responsive Adjustments for Logo and Title */
-@media (max-width: 991.98px) {
-  #logo {
-    max-width: 70px; /* Adjust size for medium screens */
-  }
-
-  .restaurant-name {
-    font-size: 1.5em; /* Adjust font size for medium screens */
-  }
-}
-
-@media (max-width: 767.98px) {
-  #logo {
-    max-width: 60px; /* Adjust size for small tablets */
-  }
-
-  .restaurant-name {
-    font-size: 1.3em; /* Adjust font size for small tablets */
-  }
-}
-
-@media (max-width: 575.98px) {
-  #logo {
-    max-width: 50px; /* Adjust size for mobile screens */
-  }
-
-  .restaurant-name {
-    font-size: 1.1em; /* Adjust font size for mobile screens */
-    display: block;
-    max-width: 150px; /* Force wrap if too long */
-    line-height: 1.2;
-  }
-}
-
-/* Global Footer Responsive Fix */
-@media (max-width: 575.98px) {
-    footer {
-        padding: 2rem 0 !important;
-    }
-    footer p {
-        line-height: 1.6;
-        letter-spacing: 0.5px;
-    }
-}
-
-/* Navbar */
+/* Modern Navbar - Glassmorphism */
 nav.navbar {
   position: sticky;
   top: 0;
-  z-index: 1030;
-  transition: box-shadow 0.3s ease;
+  z-index: 1050;
+  background: rgba(230, 57, 70, 0.95) !important; /* Premium Red with slight transparency */
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 0;
+  transition: all 0.3s ease;
 }
 
-nav.navbar.scrolled {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+.navbar-brand {
+  display: flex !important;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.02);
+}
+
+.restaurant-name {
+  font-family: var(--font-primary);
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.5px;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.nav-link {
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.5rem 1.25rem !important;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin: 0 2px;
+  color: rgba(255, 255, 255, 0.85) !important; /* Default white with slight transparency */
+}
+
+.nav-link:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.nav-link.active {
+  background: white !important;
+  color: var(--primary-color) !important;
+}
+
+/* Mobile Toggler */
+.navbar-toggler {
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.navbar-toggler:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.navbar-toggler i {
+  font-size: 1.25rem;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    background: white;
+    margin-top: 1rem;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+  
+  .nav-link {
+    color: #1e293b !important; /* Proper contrast on mobile white background */
+    margin: 4px 0;
+    padding: 0.8rem 1.2rem !important;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+  
+  .nav-link:hover {
+    background: #f8fafc;
+    color: var(--primary-color) !important;
+  }
+
+  .nav-link.active {
+    background: var(--primary-color) !important;
+    color: white !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  #logo {
+    width: 45px;
+    height: 45px;
+  }
+  .restaurant-name {
+    font-size: 0.8rem; /* Hard shrink to fit the full name */
+    max-width: none;
+    line-height: 1.1;
+    margin-right: 5px;
+    letter-spacing: -0.2px;
+  }
+
+  /* Hero Button Optimizations for Mobile */
+  .hero .btn-lg {
+    padding: 0.6rem 1.25rem !important;
+    font-size: 0.9rem !important;
+    border-radius: 8px !important; /* Squarer/Less roundy as requested */
+  }
+  
+  .hero h1 {
+    font-size: 2.5rem !important;
+  }
+  
+  .hero p {
+    font-size: 1.1rem !important;
+    margin-bottom: 2rem !important;
+  }
+
+  .hero-content {
+    padding: 2rem 1.5rem !important;
+    margin: 0 1rem;
+  }
 }
 
 a:focus,
@@ -193,29 +280,53 @@ button:focus {
   outline-offset: 2px;
 }
 
-/* Hero Section */
+/* Hero Section - Modern Design */
 .hero {
-  max-width: 1200px;
-  margin: 1rem auto;
-  padding: 100px 0;
-  text-align: center;
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 0.5rem;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-  transition: opacity 0.5s ease;
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.8)), url('../assets/filipino_cuisine_hero_bg_1773753017240.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: white;
+  margin: 0 !important;
+  max-width: 100% !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
-.hero h2 {
-  font-family: var(--font-secondary);
-  font-size: 3.5em; /* Larger and more elegant */
-  margin-bottom: 20px;
-  color: var(--primary-color);
+.hero-content {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 3rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideInUp 1s ease-out;
+  max-width: 800px;
+}
+
+.hero h1 {
+  font-size: 4rem;
+  font-weight: 800;
+  color: #fff !important;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
 }
 
 .hero p {
-  font-family: var(--font-primary);
-  font-size: 1.3em; /* Slightly larger for readability */
-  margin-bottom: 30px;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2.5rem;
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* About Us Section */
@@ -228,63 +339,53 @@ button:focus {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
 }
 
-/* Testimonials Section */
-#testimonials {
-  padding: 2rem 0;
-  background-color: #f8f9fa; /* Light background for contrast */
+/* Glass Cards */
+.card {
+  background: white;
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  transition: var(--transition-smooth);
+}
+
+.card:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: var(--premium-shadow);
+}
+
+.card-img-top {
+  transition: var(--transition-smooth);
+}
+
+.card:hover .card-img-top {
+  transform: scale(1.1);
 }
 
 #testimonials .card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-  border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border for better structure */
-  border-radius: 0.5rem; /* Rounded corners for a modern look */
-  padding: 1.5rem;
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-#testimonials .card:hover {
-  transform: translateY(-10px); /* Lift the card slightly */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
-  background-color: rgba(255, 0, 0, 0.05); /* Light red background on hover */
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  padding: 2.5rem;
+  text-align: left;
 }
 
 #testimonials .card p {
-  font-family: var(--font-primary);
-  font-size: 1rem;
-  color: #666;
-  margin-bottom: 1rem;
-  text-align: center;
-  line-height: 1.5;
+  font-style: italic;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--secondary-color);
+  position: relative;
 }
 
-#testimonials .card h5 {
-  font-family: var(--font-secondary);
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: var(--primary-color);
-  text-align: center;
-  margin-top: 1rem;
-  transition: color 0.3s ease;
-}
-
-#testimonials .card:hover h5 {
-  color: var(--secondary-color); /* Slightly darker red on hover */
-}
-
-/* Responsive Adjustments for Testimonials */
-@media (max-width: 767.98px) {
-  #testimonials .card {
-    padding: 1rem;
-  }
-
-  #testimonials .card p {
-    font-size: 0.9rem;
-  }
-
-  #testimonials .card h5 {
-    font-size: 1rem;
-  }
+#testimonials .card p::before {
+  content: '"';
+  font-size: 4rem;
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  opacity: 0.1;
+  font-family: serif;
 }
 /* Follow Us Section */
 #socialMedia a {
@@ -316,14 +417,15 @@ button:focus {
   filter: brightness(0.9); /* Slightly darken the image */
 }
 
-#featuredDishes .card h5 {
-  font-family: var(--font-secondary);
-  font-size: 1.5rem; /* Larger and more prominent */
-  transition: color 0.3s ease;
+#featuredDishes .card {
+  border-radius: 24px;
 }
 
-#featuredDishes .card:hover h5 {
-  color: var(--primary-color); /* Highlight the title on hover */
+.badge.bg-danger {
+  background-color: var(--primary-color) !important;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight: 600;
 }
 
 /* Carousel Container */
