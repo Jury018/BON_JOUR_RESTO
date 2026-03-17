@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     labels.forEach(label => label.classList.remove('selected'));
   });
 
-  // Form submission with Supabase integration
+  // Form submission (Connect to API)
   ratingForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const selectedRating = ratingForm.querySelector('input[name="rating"]:checked');
@@ -70,56 +70,42 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Please select a star rating.');
       return;
     }
-    const rating = parseInt(selectedRating.value);
-    const comments = commentBox.value.trim();
+
+    const userData = JSON.parse(localStorage.getItem('resto_user') || '{}');
+    const reviewData = {
+      rating: parseInt(selectedRating.value),
+      comment: commentBox.value.trim(),
+      userId: userData.uid || 'guest',
+      userName: userData.displayName || 'Anonymous'
+    };
+
     submitBtn.disabled = true;
 
-    // Get user/guest
-    let user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
-    let user_id = user ? user.id : null;
-    let guest_id = null;
-    if (!user_id) {
-      guest_id = localStorage.getItem('guest_id') || crypto.randomUUID();
-      localStorage.setItem('guest_id', guest_id);
-    }
-    // Get latest order for user/guest
-    let orderQuery = window.supabase.from('orders').select('id').order('created_at', { ascending: false }).limit(1);
-    if (user_id) {
-      orderQuery = orderQuery.eq('user_id', user_id);
-    } else {
-      orderQuery = orderQuery.eq('guest_id', guest_id);
-    }
-    const { data: orderData, error: orderError } = await orderQuery;
-    if (orderError || !orderData || orderData.length === 0) {
-      alert('Order not found. Please go back to cart and try again.');
-      submitBtn.disabled = false;
-      return;
-    }
-    const orderId = orderData[0].id;
+    try {
+      const response = await fetch('/api/rating', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reviewData)
+      });
 
-    const { error: ratingError } = await window.supabase.from('ratings').insert({
-      order_id: orderId,
-      user_id,
-      guest_id,
-      rating,
-      comment: comments,
-      created_at: new Date().toISOString()
-    });
-    if (ratingError) {
-      alert('Failed to save rating: ' + ratingError.message);
+      if (!response.ok) throw new Error('Failed to submit rating');
+
+      // Show toast notification
+      ratingToast.show();
+      ratingForm.reset();
+      ratingValue.textContent = '0';
+      commentCount.textContent = '0 / 300';
+      labels.forEach(label => label.classList.remove('selected'));
+      
+      setTimeout(() => {
+        sessionStorage.removeItem('canRate'); // Clear flag after rating
+        window.location.replace('../index.html');
+      }, 2000);
+
+    } catch (error) {
+      console.error('Rating Error:', error);
+      alert('Failed to submit feedback. Please try again later.');
       submitBtn.disabled = false;
-      return;
     }
-    // Show toast notification
-    ratingToast.show();
-    ratingForm.reset();
-    ratingValue.textContent = '0';
-    commentCount.textContent = '0 / 300';
-    labels.forEach(label => label.classList.remove('selected'));
-    setTimeout(() => {
-      submitBtn.disabled = false;
-      sessionStorage.removeItem('canRate'); // Clear flag after rating
-      window.location.replace('../index.html');
-    }, 2000);
   });
 });

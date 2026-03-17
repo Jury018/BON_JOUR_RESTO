@@ -1,228 +1,161 @@
-console.log('foodmenu.js loaded');
-document.addEventListener('DOMContentLoaded', async () => {
-  // Wait for Supabase to be initialized
-  function waitForSupabase() {
-    return new Promise((resolve) => {
-      const checkSupabase = () => {
-        if (window.supabase && typeof window.supabase.from === 'function') {
-          resolve();
-        } else {
-          setTimeout(checkSupabase, 100);
-        }
-      };
-      checkSupabase();
-    });
-  }
+async function loadMenu() {
+  const categories = {
+    'HOMEMADE MEALS': document.querySelector('#menu .menu-category:nth-of-type(1) .menu-container'),
+    'QUICK MEAL': document.querySelector('#menu .menu-category:nth-of-type(2) .menu-container'),
+    'ADDS ON': document.querySelector('#menu .menu-category:nth-of-type(3) .menu-container'),
+    'DRINKS': document.querySelector('#menu .menu-category:nth-of-type(4) .menu-container')
+  };
 
-  await waitForSupabase();
-
-  // Fetch menu items from Supabase and update HTML
-  async function syncMenuWithSupabase() {
-    const { data: menuItems, error } = await window.supabase
-      .from('menu')
-      .select('*');
-    if (error) {
-      console.error('Error fetching menu from Supabase:', error.message);
-      return;
+  // Show Skeletons
+  Object.values(categories).forEach(container => {
+    if (container) {
+      container.innerHTML = Array(3).fill(`
+        <div class="menu-item skeleton-container">
+          <div class="skeleton skeleton-img"></div>
+          <div class="skeleton skeleton-title mx-auto"></div>
+          <div class="skeleton skeleton-text"></div>
+          <div class="skeleton skeleton-text" style="width: 50%; margin: 0 auto 1rem;"></div>
+          <div class="skeleton skeleton-btn mx-auto"></div>
+        </div>
+      `).join('');
     }
-    if (!menuItems || menuItems.length === 0) return;
+  });
 
-    // For each menu item in Supabase, find matching .menu-item in HTML and update
+  try {
+    const response = await fetch('/api/menu');
+    if (!response.ok) throw new Error('Failed to fetch menu');
+    const menuItems = await response.json();
+
+    // Clear skeletons
+    Object.values(categories).forEach(container => {
+      if (container) container.innerHTML = '';
+    });
+
     menuItems.forEach(item => {
-      // Try to match by name (case-insensitive)
-      const menuItemEls = Array.from(document.querySelectorAll('.menu-item'));
-      const match = menuItemEls.find(el => {
-        const h3 = el.querySelector('h3');
-        return h3 && h3.textContent.trim().toLowerCase() === item.name.trim().toLowerCase();
-      });
-      if (match) {
-        // Update image if available
-        if (item.image_url) {
-          const img = match.querySelector('img');
-          if (img) img.src = item.image_url;
-        }
-        // Update name
-        const h3 = match.querySelector('h3');
-        if (h3) h3.textContent = item.name;
-        // Update description
-        const desc = match.querySelector('p');
-        if (desc) desc.textContent = item.description;
-        // Update price (second p)
-        const priceP = match.querySelectorAll('p')[1];
-        if (priceP) priceP.textContent = `₱${item.price}`;
+      const container = categories[item.category];
+      if (container) {
+        const itemHtml = `
+          <div class="menu-item fade-in" data-id="${item.id}">
+            <img src="${item.image}" alt="${item.name}" loading="lazy">
+            <h3>${item.name}</h3>
+            <p>${item.description}</p>
+            <p>₱${item.price}</p>
+            <button class="add-to-cart" data-name="${item.name}" data-price="${item.price}">Add to Cart</button>
+          </div>
+        `;
+        container.innerHTML += itemHtml;
       }
     });
+
+    console.log('Menu loaded with skeleton preloader');
+  } catch (error) {
+    console.error('Error loading menu:', error);
+    // Remove skeletons on error
+    Object.values(categories).forEach(container => {
+      if (container) container.innerHTML = '<p class="text-center w-100">Failed to load menu. Please try again.</p>';
+    });
   }
+}
 
-  // Run sync on page load
-  await syncMenuWithSupabase();
-  // Optionally, rerun sync if you want live updates (e.g., setInterval)
+document.addEventListener('DOMContentLoaded', () => {
+  loadMenu();
 
-  // Add-to-cart logic using Supabase
-  document.addEventListener('click', async (e) => {
+  // Add-to-cart logic using localStorage
+  document.addEventListener('click', (e) => {
     if (e.target.classList.contains('add-to-cart')) {
-      console.log('Add to Cart clicked');
-      const menuItem = e.target.closest('.menu-item');
-      const itemName = menuItem.querySelector('h3')?.textContent || 'Unnamed';
-      const itemPrice = (menuItem.querySelector('p:nth-of-type(2)')?.textContent || '').replace('₱', '');
-      console.log('Item:', itemName, 'Price:', itemPrice);
-      // Get user or guest
-      const user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
-      let guestId = null;
-      if (!user) {
-        guestId = sessionStorage.getItem('guest_id');
-        if (!guestId) {
-          guestId = crypto.randomUUID();
-          sessionStorage.setItem('guest_id', guestId);
-        }
-      }
-      console.log('User:', user, 'Guest ID:', guestId);
-      // Find or create order
-      let order;
-      if (user) {
-        const { data: orders } = await window.supabase
-          .from('orders')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-        order = orders && orders[0];
+      const itemName = e.target.dataset.name || e.target.closest('.menu-item')?.querySelector('h3')?.textContent || 'Unnamed';
+      const itemPrice = parseFloat(e.target.dataset.price) || parseFloat((e.target.closest('.menu-item')?.querySelector('p:nth-of-type(2)')?.textContent || '').replace('₱', '')) || 0;
+      
+      console.log('Add to Cart:', itemName, '₱', itemPrice);
+
+      // Update localStorage cart
+      const cart = JSON.parse(localStorage.getItem('resto_cart') || '[]');
+      const existingItemIndex = cart.findIndex(item => item.name === itemName);
+      
+      if (existingItemIndex > -1) {
+        cart[existingItemIndex].quantity += 1;
       } else {
-        const { data: orders } = await window.supabase
-          .from('orders')
-          .select('*')
-          .eq('guest_id', guestId)
-          .order('created_at', { ascending: false });
-        order = orders && orders[0];
+        cart.push({ name: itemName, price: itemPrice, quantity: 1 });
       }
-      if (!order) {
-        // Create new order
-        const { data: newOrder, error: orderError } = await window.supabase
-          .from('orders')
-          .insert([{ user_id: user?.id || null, guest_id: guestId, order_data: {}, created_at: new Date().toISOString() }])
-          .select();
-        if (orderError) {
-          console.error('Error creating order:', orderError);
-          alert('Error creating order: ' + orderError.message);
-          return;
-        }
-        console.log('New order created:', newOrder);
-        order = newOrder && newOrder[0];
-      } else {
-        console.log('Using existing order:', order);
+      
+      localStorage.setItem('resto_cart', JSON.stringify(cart));
+      console.log('Cart updated in localStorage');
+
+      // Sync to Firebase if bridge is available
+      if (window.FirebaseBridge) {
+        window.FirebaseBridge.syncCartToFirebase(cart);
       }
-      // Check if item already exists in order_items
-      const { data: existingItems } = await window.supabase
-        .from('order_items')
-        .select('*')
-        .eq('order_id', order.id)
-        .eq('item_name', itemName);
-      if (existingItems && existingItems.length > 0) {
-        // Update quantity
-        const item = existingItems[0];
-        const { error: updateError } = await window.supabase
-          .from('order_items')
-          .update({ quantity: item.quantity + 1 })
-          .eq('id', item.id);
-        if (updateError) {
-          console.error('Error updating item:', updateError);
-          return;
-        }
-        console.log('Updated item quantity');
-      } else {
-        // Insert new item
-        const { error: insertError } = await window.supabase
-          .from('order_items')
-          .insert([{ order_id: order.id, item_name: itemName, quantity: 1, price: parseFloat(itemPrice) || 0, created_at: new Date().toISOString() }]);
-        if (insertError) {
-          console.error('Error inserting item:', insertError);
-          return;
-        }
-        console.log('New item inserted');
-      }
+
       // Animation
-      menuItem.style.animation = 'addToCart 0.5s ease';
-      menuItem.addEventListener('animationend', () => {
-        menuItem.style.animation = '';
-      });
+      const menuItem = e.target.closest('.menu-item');
+      if (menuItem) {
+        menuItem.style.animation = 'addToCart 0.5s ease';
+        menuItem.addEventListener('animationend', () => {
+          menuItem.style.animation = '';
+        }, { once: true });
+      }
+      
       // Trigger cart update if cart.js is loaded
       if (window.updateCartPopup) {
-        await window.updateCartPopup();
+        window.updateCartPopup();
+      }
+
+      // Cart Icon Animation Feedback
+      const cartIcon = document.getElementById('cartIcon');
+      if (cartIcon) {
+        cartIcon.classList.remove('cart-bounce', 'cart-pulse');
+        void cartIcon.offsetWidth; // Trigger reflow
+        cartIcon.classList.add('cart-bounce', 'cart-pulse');
+        
+        // Remove classes after animation completes
+        setTimeout(() => {
+          cartIcon.classList.remove('cart-bounce', 'cart-pulse');
+        }, 600);
       }
     }
   });
 
-  // Add event listeners to nav links to check cart before navigation
+  // Navigation guard
   const navLinks = document.querySelectorAll('nav a.nav-link');
   navLinks.forEach(link => {
-    link.addEventListener('click', async (e) => {
-      // Get user or guest
-      const user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
-      let guestId = null;
-      if (!user) {
-        guestId = sessionStorage.getItem('guest_id');
-        if (!guestId) {
-          guestId = crypto.randomUUID();
-          sessionStorage.setItem('guest_id', guestId);
-        }
-      }
-      // Find order
-      let order;
-      if (user) {
-        const { data: orders } = await window.supabase
-          .from('orders')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-        order = orders && orders[0];
-      } else {
-        const { data: orders } = await window.supabase
-          .from('orders')
-          .select('*')
-          .eq('guest_id', guestId)
-          .order('created_at', { ascending: false });
-        order = orders && orders[0];
-      }
-      // Get cart items
-      let cartItems = [];
-      if (order) {
-        const { data: items } = await window.supabase
-          .from('order_items')
-          .select('*')
-          .eq('order_id', order.id);
-        cartItems = items || [];
-      }
-      // Allow navigation if the link is to index.html (Home)
-      if (link.getAttribute('href') === 'index.html') {
+    link.addEventListener('click', (e) => {
+      const cart = JSON.parse(localStorage.getItem('resto_cart') || '[]');
+      const href = link.getAttribute('href');
+      
+      // Allow navigation to Home unconditionally
+      if (href && href.includes('index.html')) {
         return;
       }
-      if (!cartItems || cartItems.length === 0) {
-        e.preventDefault();
-        // Show modal popup that cart is empty
-        const modalHtml = `
-          <div class="modal fade" id="emptyCartModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="messageModalLabel">No Orders Yet</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  <p>Your cart is empty. Please add items before navigating away.</p>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      
+      if (cart.length === 0) {
+        // Specifically check if they are trying to go to the cart or other protected pages
+        if (href && (href.includes('cart.html') || href.includes('checkout.html') || href.includes('rating.html'))) {
+          e.preventDefault();
+          const modalHtml = `
+            <div class="modal fade" id="emptyCartModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="messageModalLabel">Cart is Empty</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>You haven't added any delicious items to your cart yet! Browse our menu to start your order.</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Browse Menu</button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        `;
-        if (!document.getElementById('emptyCartModal')) {
-          const div = document.createElement('div');
-          div.innerHTML = modalHtml;
-          document.body.appendChild(div.firstElementChild);
+          `;
+          if (!document.getElementById('emptyCartModal')) {
+            const div = document.createElement('div');
+            div.innerHTML = modalHtml;
+            document.body.appendChild(div.firstElementChild);
+          }
+          const emptyCartModal = new bootstrap.Modal(document.getElementById('emptyCartModal'));
+          emptyCartModal.show();
         }
-        const emptyCartModal = new bootstrap.Modal(document.getElementById('emptyCartModal'));
-        emptyCartModal.show();
       }
     });
   });

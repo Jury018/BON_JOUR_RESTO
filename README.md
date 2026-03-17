@@ -1,4 +1,3 @@
-
 # BON JOUR PINOY RESTAURANT v2
 
 ## Overview
@@ -11,8 +10,8 @@ Modern Filipino restaurant web app featuring online menu, cart, authentication, 
 - Responsive design with Bootstrap 5
 - Dynamic food menu and featured dishes
 - Add-to-cart and checkout flow
-- Supabase authentication (email/password, Google sign-in)
-- Guest visit tracking and analytics
+- User authentication (local storage or session based)
+- Guest visit tracking
 - Contact form with validation and Web3Forms integration
 - Rating/feedback system
 - Smart navigation bar (Sign In/Sign Out)
@@ -24,13 +23,12 @@ Modern Filipino restaurant web app featuring online menu, cart, authentication, 
 ## Tech Stack
 - HTML5, CSS3, JavaScript (ES6+)
 - Bootstrap 5, FontAwesome
-- Supabase (Postgres backend, Auth)
 - Vercel (hosting)
 - Web3Forms (contact form)
 
 ## Getting Started
 1. Clone the repo and install dependencies if needed.
-2. Configure Supabase credentials in JS files.
+2. Configure contact form credentials if needed.
 3. Deploy to Vercel or any static host.
 
 ## Folder Structure
@@ -41,9 +39,7 @@ Modern Filipino restaurant web app featuring online menu, cart, authentication, 
 - `html/rating.html` - Feedback
 - `assets/` - Images and icons
 - `css/` - Stylesheets
-- `js/` - Scripts (auth, cart, UI, Supabase)
+- `js/` - Scripts (auth, cart, UI)
 
 ## License
 MIT
-
-

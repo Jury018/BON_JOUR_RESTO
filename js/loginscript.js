@@ -11,9 +11,7 @@ function toggleSignUpPasswords() {
 window.toggleSignUpPasswords = toggleSignUpPasswords;
 
 // --- SMART LOGIN SCRIPT ---
-const SUPABASE_URL = 'https://ybpfjtlygmrvhwtbfzxm.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlicGZqdGx5Z21ydmh3dGJmenhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NzU4NzcsImV4cCI6MjA3OTA1MTg3N30.Yp9VcLN4XgBLUBw_bBWpEEaP851wCPVCjhIQ-Id1WN0';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Supabase integration removed
 
 let lastSignUpAttempt = 0;
 
@@ -81,6 +79,130 @@ function togglePasswordVisibility(ids) {
   });
 }
 
+async function signIn() {
+  const email = document.getElementById('signInIdentifier')?.value;
+  const password = document.getElementById('signInPassword')?.value;
+  
+  if (!email || !password) {
+    showSmartModal({title: 'Sign In', message: 'Please fill in all fields.', type: 'error'});
+    return;
+  }
+
+  try {
+    const result = await firebase.auth().signInWithEmailAndPassword(email, password);
+    showSmartModal({title: 'Sign In', message: 'Sign-in successful! Redirecting...', type: 'success', autoClose: true});
+    
+    // Save user info for frontend use
+    localStorage.setItem('resto_user', JSON.stringify({ 
+      email: result.user.email,
+      uid: result.user.uid
+    }));
+
+    // Set session cookie for middleware
+    document.cookie = "resto_session=true; path=/; max-age=2592000; SameSite=Lax";
+
+    clearFormFields('signInFormElement');
+    setTimeout(() => {
+      window.location.href = 'foodmenu.html';
+    }, 1200);
+  } catch (error) {
+    showSmartModal({title: 'Sign In Error', message: error.message, type: 'error'});
+  }
+}
+
+async function signUp() {
+  const now = Date.now();
+  const email = document.getElementById('signUpIdentifier')?.value;
+  const password = document.getElementById('signUpPassword')?.value;
+  const confirmPassword = document.getElementById('confirmPassword')?.value;
+
+  if (now - lastSignUpAttempt < 5000) return;
+
+  if (!email || !password || !confirmPassword) {
+    showSmartModal({title: 'Sign Up', message: 'Please fill in all fields.', type: 'error'});
+    return;
+  }
+
+  if (!isStrongPassword(password)) {
+    showSmartModal({title: 'Sign Up', message: 'Password must be at least 8 characters long, include a number, an uppercase letter, and a lowercase letter.', type: 'error'});
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    showSmartModal({title: 'Sign Up', message: 'Passwords do not match.', type: 'error'});
+    return;
+  }
+
+  try {
+    lastSignUpAttempt = now;
+    await firebase.auth().createUserWithEmailAndPassword(email, password);
+    showSmartModal({title: 'Sign Up', message: 'Account created successfully! You can now sign in.', type: 'success'});
+    clearFormFields('signUpFormElement');
+    showSignIn(); // Switch to sign in form
+  } catch (error) {
+    showSmartModal({title: 'Sign Up Error', message: error.message, type: 'error'});
+  }
+}
+
+async function signOut() {
+  try {
+    if (typeof firebase !== 'undefined' && firebase.auth()) {
+      await firebase.auth().signOut();
+    }
+    // Clear localStorage
+    localStorage.removeItem('resto_user');
+    // Clear session cookie
+    document.cookie = "resto_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    
+    showSmartModal({title: 'Sign Out', message: 'You have been signed out.', type: 'info', autoClose: true});
+    setTimeout(() => {
+      window.location.href = '../index.html';
+    }, 1200);
+  } catch (error) {
+    showSmartModal({title: 'Sign Out Error', message: error.message, type: 'error'});
+  }
+}
+window.signOut = signOut;
+
+async function sendPasswordResetEmail() {
+  const email = document.getElementById('signInIdentifier')?.value;
+  if (!email) {
+    showSmartModal({title: 'Password Reset', message: 'Please enter your email address first.', type: 'error'});
+    return;
+  }
+
+  try {
+    await firebase.auth().sendPasswordResetEmail(email);
+    showSmartModal({title: 'Password Reset', message: 'Password reset email sent! Check your inbox.', type: 'success'});
+  } catch (error) {
+    showSmartModal({title: 'Reset Error', message: error.message, type: 'error'});
+  }
+}
+
+async function signInWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    const result = await firebase.auth().signInWithPopup(provider);
+    showSmartModal({title: 'Google Sign In', message: `Welcome ${result.user.displayName}! Redirecting...`, type: 'success', autoClose: true});
+    
+    localStorage.setItem('resto_user', JSON.stringify({ 
+      email: result.user.email,
+      uid: result.user.uid,
+      displayName: result.user.displayName
+    }));
+
+    // Set session cookie for middleware
+    document.cookie = "resto_session=true; path=/; max-age=2592000; SameSite=Lax";
+
+    setTimeout(() => {
+      window.location.href = 'foodmenu.html';
+    }, 1200);
+  } catch (error) {
+    showSmartModal({title: 'Google Sign In Error', message: error.message, type: 'error'});
+  }
+}
+
+// Update event listener for Google sign-in
 function attachEventListeners() {
   document.getElementById('signInFormElement')?.addEventListener('submit', async e => {
     e.preventDefault();
@@ -102,111 +224,9 @@ function attachEventListeners() {
       bootstrap.Modal.getInstance(document.getElementById('messageModal'))?.hide();
     });
   });
-  // For Google sign-in, use Supabase's OAuth provider and redirect to foodmenu.html after login
-  document.getElementById('googleSignInBtn')?.addEventListener('click', async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/html/foodmenu.html`
-        }
-      });
-      if (error) throw error;
-      // The user will be redirected by Supabase after successful sign-in
-    } catch (error) {
-      showSmartModal({title: 'Google Sign-In', message: `Google sign-in failed: ${error.message}`, type: 'error'});
-    }
-  });
-}
-
-async function signIn() {
-  const email = document.getElementById('signInIdentifier')?.value;
-  const password = document.getElementById('signInPassword')?.value;
-  if (!email || !password) {
-    showSmartModal({title: 'Sign In', message: 'Please fill in all fields.', type: 'error'});
-    return;
-  }
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      showSmartModal({title: 'Sign In', message: `Sign-in failed: ${error.message}`, type: 'error'});
-      return;
-    }
-    showSmartModal({title: 'Sign In', message: 'Sign-in successful! Redirecting to menu...', type: 'success', autoClose: true});
-    clearFormFields('signInFormElement');
-    setTimeout(() => {
-      window.location.href = 'foodmenu.html';
-    }, 1200);
-  } catch (error) {
-    showSmartModal({title: 'Sign In', message: `Sign-in failed: ${error.message}`, type: 'error'});
-  }
-}
-
-async function signUp() {
-  const now = Date.now();
-  const email = document.getElementById('signUpIdentifier')?.value;
-  const password = document.getElementById('signUpPassword')?.value;
-  const confirmPassword = document.getElementById('confirmPassword')?.value;
-  if (now - lastSignUpAttempt < 5000) {
-    // Just return silently, don't show modal
-    return;
-  }
-  if (!email || !password || !confirmPassword) {
-    showSmartModal({title: 'Sign Up', message: 'Please fill in all fields.', type: 'error'});
-    return;
-  }
-  if (!isStrongPassword(password)) {
-    showSmartModal({title: 'Sign Up', message: 'Password must be at least 8 characters long, include a number, an uppercase letter, and a lowercase letter.', type: 'error'});
-    return;
-  }
-  if (password !== confirmPassword) {
-    showSmartModal({title: 'Sign Up', message: 'Passwords do not match. Please try again.', type: 'error'});
-    document.getElementById('confirmPassword').focus();
-    return;
-  }
-  lastSignUpAttempt = now;
-  try {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      
-      if (error.message && error.message.toLowerCase().includes('rate limit')) {
-        showSmartModal({title: 'Sign Up', message: 'Please wait before trying to sign up again.', type: 'error'});
-      } else {
-        showSmartModal({title: 'Sign Up', message: `Sign-up failed: ${error.message}`, type: 'error'});
-      }
-      return;
-    }
-    showSmartModal({
-      title: 'Sign Up',
-      message: 'Sign-up successful! Please check your email for verification.',
-      type: 'success',
-      autoClose: false
-    });
-    clearFormFields('signUpFormElement');
-    
-  } catch (error) {
-    showSmartModal({title: 'Sign Up', message: `Sign-up failed: ${error.message}`, type: 'error'});
-  }
-}
-
-async function sendPasswordResetEmail() {
-  const emailInput = document.getElementById('signInIdentifier');
-  const email = emailInput?.value;
-  if (!email) {
-    showSmartModal({title: 'Password Reset', message: 'Please enter your email address to reset your password.', type: 'error'});
-    return;
-  }
-  try {
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email);
-    if (error) {
-      showSmartModal({title: 'Password Reset', message: `Password reset failed: ${error.message}`, type: 'error'});
-      return;
-    }
-    showSmartModal({title: 'Password Reset', message: 'Password reset email sent! Check your inbox.', type: 'success', autoClose: true});
-    if (emailInput) emailInput.value = '';
-  } catch (error) {
-    showSmartModal({title: 'Password Reset', message: `Password reset failed: ${error.message}`, type: 'error'});
-  }
+  
+  // Re-enable Google sign-in
+  document.getElementById('googleSignInBtn')?.addEventListener('click', signInWithGoogle);
 }
 
 function showSignUp() {
@@ -219,22 +239,14 @@ function toggleForms(hideFormId, showFormId) {
   const hideForm = document.getElementById(hideFormId);
   const showForm = document.getElementById(showFormId);
   if (hideForm && showForm) {
-    const newHideForm = hideForm.cloneNode(true);
-    hideForm.parentNode.replaceChild(newHideForm, hideForm);
-    newHideForm.style.transition = 'opacity 0.5s ease';
-    showForm.style.transition = 'opacity 0.5s ease';
-    newHideForm.style.opacity = 0;
-    newHideForm.addEventListener('transitionend', function handler() {
-      newHideForm.style.display = 'none';
-      showForm.style.display = 'block';
-      showForm.style.opacity = 0;
-      void showForm.offsetWidth;
-      showForm.style.opacity = 1;
-      newHideForm.removeEventListener('transitionend', handler);
-      attachEventListeners();
-      clearFormFields('signInFormElement');
-      clearFormFields('signUpFormElement');
-    });
+    hideForm.classList.add('auth-switch-fade');
+    hideForm.style.display = 'none';
+    
+    showForm.style.display = 'block';
+    showForm.classList.add('auth-switch-fade');
+    
+    clearFormFields('signInFormElement');
+    clearFormFields('signUpFormElement');
   }
 }
 

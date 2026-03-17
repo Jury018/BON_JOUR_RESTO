@@ -376,43 +376,15 @@ footer {
   background-color: #c82333;
 }
 
-/* Styles for the custom loading message */
-.custom-loading {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 8px;
-  padding: 30px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  text-align: center;
-  display: none;
+
+/* Transition for loading states */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
 }
 
-.custom-loading p {
-  font-size: 1.2em;
-  margin-bottom: 20px;
-}
-
-.custom-loading .loading {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 0.5s linear infinite;
-  margin: 0 auto;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Animation for adding to cart */

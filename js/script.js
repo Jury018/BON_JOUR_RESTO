@@ -1,20 +1,10 @@
-// Record guest visit to Supabase before redirecting (for index.html modal)
+// Guest visit redirect (Supabase removed)
 document.addEventListener('DOMContentLoaded', () => {
   const guestBtn = document.querySelector('#signupGuestModal .btn-secondary');
   if (guestBtn) {
-    guestBtn.addEventListener('click', async function(e) {
+    guestBtn.addEventListener('click', function(e) {
       e.preventDefault();
-      try {
-        const { error } = await window.supabase.from('guest_visits').insert({ visited_at: new Date().toISOString() });
-        if (error) {
-          console.error('Failed to record guest visit:', error);
-        }
-      } catch (err) {
-        console.error('Failed to record guest visit:', err);
-      }
-      setTimeout(() => {
-        window.location.href = 'html/foodmenu.html';
-      }, 300); // short delay to ensure insert
+      window.location.href = 'html/foodmenu.html';
     });
   }
 });
@@ -26,26 +16,16 @@ function debounce(func, wait) {
   };
 }
 
-// Show loading spinner for buttons only
+// Show loading skeleton for buttons only (optimized)
 function showLoading(event) {
-  event.preventDefault(); // Prevent default navigation or form submission
-  const loading = document.getElementById('customLoading');
-
-  // Check if the user is online
-  if (navigator.onLine) {
-    loading.style.display = 'block';
-
-    // Simulate a delay before navigating (e.g., 1 second)
-    setTimeout(() => {
-      const target = event.target.closest('button'); // Ensure it's a button
-      if (target && target.dataset.href) {
-        window.location.href = target.dataset.href; // Navigate to the link stored in data-href
-      } else {
-        loading.style.display = 'none'; // Hide spinner if no navigation occurs
-      }
-    }, 1000); // 1 second delay
-  } else { 
-    showModalMessage('You are offline. Please check your internet connection.', false);
+  event.preventDefault(); 
+  const target = event.target.closest('button');
+  if (target && target.dataset.href) {
+    if (navigator.onLine) {
+      window.location.href = target.dataset.href;
+    } else {
+      showModalMessage('You are offline. Please check your internet connection.', false);
+    }
   }
 }
 
@@ -178,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
       loginModal.hide();
 
       // Log the guest action
+      document.cookie = "resto_session=guest; path=/; max-age=86400; SameSite=Lax";
 
       window.location.href = 'foodmenu.html'; 
     });
@@ -255,6 +236,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (foodMenuLink) {
     foodMenuLink.addEventListener('click', (event) => {
+      // Check if user is already logged in
+      const userData = JSON.parse(localStorage.getItem('resto_user') || 'null');
+      
+      if (userData) {
+        // User is logged in, skip modal
+        return; 
+      }
+
       event.preventDefault();
       const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
       loginModal.show();
@@ -271,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (guestButton) {
         guestButton.addEventListener('click', () => {
           loginModal.hide();
+          document.cookie = "resto_session=guest; path=/; max-age=86400; SameSite=Lax";
           window.location.href = 'foodmenu.html';
         });
       }
@@ -282,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
 
       // Check if there are items in the cart (example using localStorage)
-      const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+      const cartItems = JSON.parse(localStorage.getItem('resto_cart')) || [];
 
       if (cartItems.length === 0) {
         const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));

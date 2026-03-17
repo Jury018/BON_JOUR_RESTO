@@ -1,0 +1,12 @@
+{
+  "name": "bon-jour-resto-api",
+  "version": "1.0.0",
+  "description": "Serverless API for Bon Jour Pinoy Restaurant using Firebase Admin SDK",
+  "main": "api/index.js",
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}

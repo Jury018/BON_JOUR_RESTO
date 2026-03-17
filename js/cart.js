@@ -1,27 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log('cart.js script loaded successfully.');
 
-  // Wait for Supabase to be initialized
-  function waitForSupabase() {
-    return new Promise((resolve) => {
-      const checkSupabase = () => {
-        if (window.supabase && typeof window.supabase.from === 'function') {
-          resolve();
-        } else {
-          setTimeout(checkSupabase, 100);
-        }
-      };
-      checkSupabase();
-    });
+  // Check if cart is empty - redirect if nothing to show
+  const cart = JSON.parse(localStorage.getItem('resto_cart') || '[]');
+  if (cart.length === 0 && window.location.pathname.includes('cart.html')) {
+    window.location.href = 'foodmenu.html';
+    return;
   }
 
-  // Initialize cart after Supabase is ready
-  waitForSupabase().then(() => {
-    initializeCart();
-  });
+  // Initialize cart
+  initializeCart();
 
   function initializeCart() {
-    // (Removed disabling of cart icon on cart.html page to ensure real-time functionality)
+    // Only show the floating cart icon on the foodmenu.html page
+    if (!window.location.pathname.includes('foodmenu.html')) {
+        console.log('Floating cart icon disabled for this page.');
+        return;
+    }
 
     // Create Cart Icon
     const cartIcon = document.createElement('div');
@@ -43,6 +38,28 @@ document.addEventListener('DOMContentLoaded', () => {
       transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     });
     cartIcon.innerHTML = '<i class="fas fa-shopping-cart" style="color: white; font-size: 1.8em;"></i>';
+
+    // Create Cart Badge
+    const cartBadge = document.createElement('span');
+    cartBadge.id = 'cartBadge';
+    Object.assign(cartBadge.style, {
+      position: 'absolute',
+      top: '-5px',
+      right: '-5px',
+      backgroundColor: '#fff',
+      color: '#ff0000',
+      borderRadius: '50%',
+      width: '24px',
+      height: '24px',
+      display: 'none', // Hidden by default
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '0.8em',
+      fontWeight: 'bold',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+      border: '2px solid #ff0000'
+    });
+    cartIcon.appendChild(cartBadge);
 
     // Tooltip
     const tooltip = document.createElement('div');
@@ -86,15 +103,16 @@ document.addEventListener('DOMContentLoaded', () => {
       padding: '10px',
     });
     cartPopup.innerHTML = `
-      <div style="padding: 20px; background-color: #ff0000; color: white; font-size: 1.2em; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
-        <span id="greeting">Hello Guest</span>
-        <div>
-          <button id="maximizeCart" style="background: none; border: none; color: white; font-size: 1em; cursor: pointer; margin-right: 10px;">+</button>
-          <button id="closeCart" style="background: none; border: none; color: white; font-size: 1em; cursor: pointer;">x</button>
-        </div>
+      <div style="padding: 15px; background-color: #ff0000; color: white; font-size: 1.1em; font-weight: bold; text-align: center;">
+        <span id="greeting">Your Orders</span>
       </div>
-      <div style="padding: 20px; overflow-y: auto; height: calc(100% - 60px);">
+      <div style="padding: 20px; overflow-y: auto; max-height: 300px;">
         <ul id="cartItems" style="list-style: none; padding: 0; margin: 0;"></ul>
+      </div>
+      <div style="padding: 15px; border-top: 1px solid #eee; text-align: center;">
+        <button id="viewFullCart" class="btn btn-danger w-100 fw-bold shadow-sm" style="border-radius: 20px;">
+          Go to Cart & Checkout <i class="fas fa-arrow-right ms-2"></i>
+        </button>
       </div>
     `;
     document.body.appendChild(cartPopup);
@@ -102,9 +120,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to update the cart popup position relative to the cart icon
     function updateCartPopupPosition() {
       const cartIconRect = cartIcon.getBoundingClientRect();
-      cartPopup.style.position = 'fixed'; // Ensure it stays relative to the viewport
+      const popupWidth = cartPopup.offsetWidth || 250;
+      cartPopup.style.position = 'fixed';
       cartPopup.style.top = `${cartIconRect.top}px`;
-      cartPopup.style.left = `${cartIconRect.left - cartPopup.offsetWidth}px`;
+      
+      // If icon is on the left half of the screen, show popup on the right
+      // Otherwise, show popup on the left
+      if (cartIconRect.left < window.innerWidth / 2) {
+        cartPopup.style.left = `${cartIconRect.right + 10}px`;
+        cartPopup.style.borderRadius = '0 10px 10px 10px';
+      } else {
+        cartPopup.style.left = `${cartIconRect.left - popupWidth - 10}px`;
+        cartPopup.style.borderRadius = '10px 0 10px 10px';
+      }
     }
 
     // Update cart popup position on scroll
@@ -166,64 +194,71 @@ document.addEventListener('DOMContentLoaded', () => {
         const cartIconRect = cartIcon.getBoundingClientRect();
         cartPopup.style.top = `${cartIconRect.top}px`;
         cartPopup.style.left = `${cartIconRect.left - cartPopup.offsetWidth}px`;
+        updateCartPopupPosition(); // Position the popup dynamically
         cartPopup.style.opacity = '1';
         cartPopup.style.pointerEvents = 'auto';
         updateCartPopup();
       }
     });
 
-    document.getElementById('maximizeCart').addEventListener('click', () => {
-      window.location.href = 'cart.html';
-    });
-
-    document.getElementById('closeCart').addEventListener('click', () => {
-      cartPopup.classList.remove('show');
-      cartPopup.style.opacity = '0';
-      cartPopup.style.pointerEvents = 'none';
-    });
+    const viewFullCartBtn = document.getElementById('viewFullCart');
+    if (viewFullCartBtn) {
+      viewFullCartBtn.addEventListener('click', () => {
+        window.location.href = 'cart.html';
+      });
+    }
 
     // Greeting - simplified to always show guest (no Supabase auth)
     const greeting = document.getElementById('greeting');
     greeting.textContent = 'Good day Customer!';
 
-    // Cart UI update
-    const updateCartPopup = async () => {
+    // Cart UI update using localStorage
+    const updateCartPopup = () => {
       const cartItemsList = document.getElementById('cartItems');
+      const badge = document.getElementById('cartBadge');
+      if (!cartItemsList) return;
       cartItemsList.innerHTML = '';
-      let user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
-      let user_id = user ? user.id : null;
-      let guest_id = null;
-      if (!user_id) {
-        guest_id = sessionStorage.getItem('guest_id');
-        if (!guest_id) {
-          guest_id = crypto.randomUUID();
-          sessionStorage.setItem('guest_id', guest_id);
+      
+      const cart = JSON.parse(localStorage.getItem('resto_cart') || '[]');
+      
+      // Update Badge
+      if (badge) {
+        const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        if (totalItems > 0) {
+          badge.textContent = totalItems;
+          badge.style.display = 'flex';
+          
+          // Add animate class for attention
+          badge.classList.remove('pulse-animation');
+          void badge.offsetWidth;
+          badge.classList.add('pulse-animation');
+        } else {
+          badge.style.display = 'none';
         }
       }
-      // Get latest order for user/guest
-      let orderQuery = window.supabase.from('orders').select('id').order('created_at', { ascending: false }).limit(1);
-      if (user_id) {
-        orderQuery = orderQuery.eq('user_id', user_id);
-      } else {
-        orderQuery = orderQuery.eq('guest_id', guest_id);
-      }
-      const { data: orderData, error: orderError } = await orderQuery;
-      if (orderError || !orderData || orderData.length === 0) {
-        cartItemsList.innerHTML = '<li style="text-align:center;color:#666;">Your cart is empty.</li>';
+
+      if (cart.length === 0) {
+        cartItemsList.innerHTML = '<li style="text-align:center;color:#666;padding:20px;">Your cart is empty.</li>';
+        const viewBtn = document.getElementById('viewFullCart');
+        if (viewBtn) viewBtn.disabled = true;
         return;
       }
-      const orderId = orderData[0].id;
-      // Get items for this order
-      const { data: items, error: itemsError } = await window.supabase.from('order_items').select('*').eq('order_id', orderId);
-      if (itemsError || !items || items.length === 0) {
-        cartItemsList.innerHTML = '<li style="text-align:center;color:#666;">Your cart is empty.</li>';
-        return;
-      }
-      items.forEach(item => {
+      
+      const viewBtn = document.getElementById('viewFullCart');
+      if (viewBtn) viewBtn.disabled = false;
+      
+      cart.forEach(item => {
         const listItem = document.createElement('li');
-        listItem.style.padding = '10px';
-        listItem.style.borderBottom = '1px solid #ddd';
-        listItem.textContent = `${item.item_name} - ₱${item.price} x${item.quantity}`;
+        listItem.style.padding = '8px 0';
+        listItem.style.borderBottom = '1px solid #eee';
+        listItem.style.fontSize = '0.9em';
+        listItem.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:500;">${item.name}</span>
+            <span style="color:#ff0000; font-weight:bold;">x${item.quantity}</span>
+          </div>
+          <div style="text-align:right; font-size:0.85em; color:#888;">₱${(item.price * item.quantity).toFixed(2)}</div>
+        `;
         cartItemsList.appendChild(listItem);
       });
     };
@@ -231,41 +266,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Expose updateCartPopup globally
     window.updateCartPopup = updateCartPopup;
 
-    // Update cart summary totals (for cart.html page)
-    const updateCartSummary = async () => {
-      let user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
-      let user_id = user ? user.id : null;
-      let guest_id = null;
-      if (!user_id) {
-        guest_id = sessionStorage.getItem('guest_id');
-        if (!guest_id) {
-          guest_id = crypto.randomUUID();
-          sessionStorage.setItem('guest_id', guest_id);
-        }
-      }
-      // Get latest order
-      let orderQuery = window.supabase.from('orders').select('id').order('created_at', { ascending: false }).limit(1);
-      if (user_id) {
-        orderQuery = orderQuery.eq('user_id', user_id);
-      } else {
-        orderQuery = orderQuery.eq('guest_id', guest_id);
-      }
-      const { data: orderData } = await orderQuery;
-      if (!orderData || orderData.length === 0) {
-        document.getElementById('cart-subtotal').textContent = '₱0.00';
-        document.getElementById('cart-total').textContent = '₱0.00';
-        return;
-      }
-      const orderId = orderData[0].id;
-      const { data: items } = await window.supabase.from('order_items').select('*').eq('order_id', orderId);
+    // Update cart summary totals using localStorage
+    const updateCartSummary = () => {
+      const cart = JSON.parse(localStorage.getItem('resto_cart') || '[]');
       let subtotal = 0;
-      if (items) {
-        items.forEach(item => {
-          subtotal += item.price * item.quantity;
-        });
-      }
-      document.getElementById('cart-subtotal').textContent = `₱${subtotal.toFixed(2)}`;
-      document.getElementById('cart-total').textContent = `₱${subtotal.toFixed(2)}`;
+      cart.forEach(item => {
+        subtotal += item.price * item.quantity;
+      });
+      const subtotalEl = document.getElementById('cart-subtotal');
+      const totalEl = document.getElementById('cart-total');
+      if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
+      if (totalEl) totalEl.textContent = `₱${subtotal.toFixed(2)}`;
     };
 
     // Mobile responsive
@@ -294,46 +305,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
       async function renderCartPageItems() {
         const cartItemsList = document.getElementById('cart-items');
-        let user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
-        let user_id = user ? user.id : null;
-        let guest_id = null;
-        if (!user_id) {
-          guest_id = sessionStorage.getItem('guest_id');
-          if (!guest_id) {
-            guest_id = crypto.randomUUID();
-            sessionStorage.setItem('guest_id', guest_id);
-          }
-        }
-        // Get latest order
-        let orderQuery = window.supabase.from('orders').select('id').order('created_at', { ascending: false }).limit(1);
-        if (user_id) {
-          orderQuery = orderQuery.eq('user_id', user_id);
-        } else {
-          orderQuery = orderQuery.eq('guest_id', guest_id);
-        }
-        const { data: orderData } = await orderQuery;
-        if (!orderData || orderData.length === 0) {
-          cartItemsList.innerHTML = '<li class="list-group-item text-center text-muted">Your cart is empty.</li>';
-          cartSubtotal.textContent = '₱0.00';
-          cartTotal.textContent = '₱0.00';
-          return;
-        }
-        const orderId = orderData[0].id;
-        const { data: items } = await window.supabase.from('order_items').select('*').eq('order_id', orderId);
-        if (!items || items.length === 0) {
-          cartItemsList.innerHTML = '<li class="list-group-item text-center text-muted">Your cart is empty.</li>';
-          cartSubtotal.textContent = '₱0.00';
-          cartTotal.textContent = '₱0.00';
+        if (!cartItemsList) return;
+        
+        const cart = JSON.parse(localStorage.getItem('resto_cart') || '[]');
+        
+        // Show skeletons briefly
+        cartItemsList.innerHTML = Array(Math.max(cart.length, 1)).fill(`
+          <li class="list-group-item">
+            <div class="skeleton skeleton-text" style="width: 60%; display: inline-block;"></div>
+            <div class="skeleton skeleton-text" style="width: 20%; float: right;"></div>
+          </li>
+        `).join('');
+
+        // Small delay to simulate "loading" sensation for UX consistency
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        if (cart.length === 0) {
+          cartItemsList.innerHTML = '<li class="list-group-item text-center text-muted fade-in">Your cart is empty.</li>';
+          if (cartSubtotal) cartSubtotal.textContent = '₱0.00';
+          if (cartTotal) cartTotal.textContent = '₱0.00';
           return;
         }
 
         cartItemsList.innerHTML = '';
-        items.forEach((item, index) => {
+        cart.forEach((item, index) => {
           const listItem = document.createElement('li');
           listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
 
           const nameSpan = document.createElement('span');
-          nameSpan.textContent = item.item_name;
+          nameSpan.textContent = item.name;
           nameSpan.style.flex = '2';
 
           const quantityInput = document.createElement('input');
@@ -342,16 +342,19 @@ document.addEventListener('DOMContentLoaded', () => {
           quantityInput.value = item.quantity;
           quantityInput.style.width = '60px';
           quantityInput.className = 'form-control form-control-sm mx-2';
-          quantityInput.addEventListener('change', async (e) => {
+          quantityInput.addEventListener('change', (e) => {
             const newQuantity = parseInt(e.target.value);
             if (isNaN(newQuantity) || newQuantity < 1) {
               e.target.value = item.quantity;
               return;
             }
-            await window.supabase.from('order_items').update({ quantity: newQuantity }).eq('id', item.id);
+            const updatedCart = JSON.parse(localStorage.getItem('resto_cart') || '[]');
+            updatedCart[index].quantity = newQuantity;
+            localStorage.setItem('resto_cart', JSON.stringify(updatedCart));
+            if (window.FirebaseBridge) window.FirebaseBridge.syncCartToFirebase(updatedCart);
             updateCartPopup();
-            await updateCartSummary();
-            await renderCartPageItems();
+            updateCartSummary();
+            renderCartPageItems();
           });
 
           const priceSpan = document.createElement('span');
@@ -362,11 +365,14 @@ document.addEventListener('DOMContentLoaded', () => {
           const removeBtn = document.createElement('button');
           removeBtn.className = 'btn btn-sm btn-outline-danger ms-2';
           removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
-          removeBtn.addEventListener('click', async () => {
-            await window.supabase.from('order_items').delete().eq('id', item.id);
+          removeBtn.addEventListener('click', () => {
+            const updatedCart = JSON.parse(localStorage.getItem('resto_cart') || '[]');
+            updatedCart.splice(index, 1);
+            localStorage.setItem('resto_cart', JSON.stringify(updatedCart));
+            if (window.FirebaseBridge) window.FirebaseBridge.syncCartToFirebase(updatedCart);
             updateCartPopup();
-            await updateCartSummary();
-            await renderCartPageItems();
+            updateCartSummary();
+            renderCartPageItems();
           });
 
           listItem.appendChild(nameSpan);
@@ -378,12 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Update totals
-        let subtotal = 0;
-        items.forEach(item => {
-          subtotal += item.price * item.quantity;
-        });
-        cartSubtotal.textContent = `₱${subtotal.toFixed(2)}`;
-        cartTotal.textContent = `₱${subtotal.toFixed(2)}`;
+        updateCartSummary();
       }
 
       renderCartPageItems();
@@ -405,27 +406,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Implement proceedToCheckout function
-async function proceedToCheckout() {
-  let user = window.supabase?.auth.getUser ? (await window.supabase.auth.getUser()).data.user : null;
-  let user_id = user ? user.id : null;
-  let guest_id = null;
-  if (!user_id) {
-    guest_id = sessionStorage.getItem('guest_id');
-    if (!guest_id) {
-      guest_id = crypto.randomUUID();
-      sessionStorage.setItem('guest_id', guest_id);
-    }
-  }
-  // Get latest order
-  let orderQuery = window.supabase.from('orders').select('id').order('created_at', { ascending: false }).limit(1);
-  if (user_id) {
-    orderQuery = orderQuery.eq('user_id', user_id);
-  } else {
-    orderQuery = orderQuery.eq('guest_id', guest_id);
-  }
-  const { data: orderData } = await orderQuery;
-  if (!orderData || orderData.length === 0) {
+function proceedToCheckout() {
+  const cart = JSON.parse(localStorage.getItem('resto_cart') || '[]');
+  if (cart.length === 0) {
     // Show modal popup that cart is empty
     const modalHtml = `
       <div class="modal fade" id="emptyCartModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
@@ -454,6 +437,24 @@ async function proceedToCheckout() {
     emptyCartModal.show();
     return;
   }
-  // Redirect to checkout page
+
+  // Check for authenticated session (not guest)
+  const sessionCookie = document.cookie.split('; ').find(row => row.startsWith('resto_session='));
+  const sessionValue = sessionCookie ? sessionCookie.split('=')[1] : null;
+
+  if (sessionValue !== 'true') {
+    // User is guest or not logged in, show authentication required modal
+    const authModalElem = document.getElementById('authRequiredModal');
+    if (authModalElem) {
+      const authModal = new bootstrap.Modal(authModalElem);
+      authModal.show();
+    } else {
+      // Fallback if modal not present (shouldn't happen on cart.html)
+      window.location.href = 'login.html';
+    }
+    return;
+  }
+
+  // Redirect to checkout page for authenticated users
   window.location.href = 'checkout.html';
 }

@@ -12,9 +12,13 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap JS Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
-  <!-- Supabase JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="../js/supabase.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/firebase-bridge.js"></script>
 </head>
 <body>
   <header>
@@ -24,9 +28,9 @@
           <img src="../assets/logo.svg" alt="Bon Jour Pinoy Restaurant Logo" id="logo" />
           <span class="restaurant-name ms-2 fw-bold">BON JOUR PINOY RESTAURANT™</span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
           aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+          <i class="fas fa-bars text-white"></i>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
          <ul class="navbar-nav ms-auto">
@@ -43,19 +47,6 @@
 
   <main>
 
-    <div style="width: 100%; background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; padding: 15px 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); position: relative; z-index: 10;">
-      <div style="display: flex; align-items: center; justify-content: center; max-width: 1200px; margin: 0 auto; position: relative;">
-        <i class="fas fa-exclamation-triangle" style="font-size: 1.5em; margin-right: 15px; animation: pulse 2s infinite;"></i>
-        <span style="font-size: 1.1em; font-weight: 500; text-align: center;"><strong>Notice:</strong> Adding orders is still under development. Functionality may not work as expected.</span>
-      </div>
-      <style>
-        @keyframes pulse {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.1); }
-          100% { transform: scale(1); }
-        }
-      </style>
-    </div>
     <section class="hero text-center mx-auto my-4" aria-labelledby="hero-title" style="max-width:1200px;padding:100px 0;background-color:rgba(255,255,255,0.95);border-radius:0.5rem;box-shadow:0 0 15px rgba(33, 33, 33, 0.3);">
       <h2 id="hero-title" class="display-4 text-danger mb-3 fw-bold" style="font-family:'Lora',serif;font-size:3.5em;">Welcome to Bon Jour Pinoy Restaurant!</h2>
       <p class="lead mb-4" style="font-size:1.3em;">Experience the taste of Filipino cuisine with a Homemade twist.</p>
@@ -396,9 +387,10 @@
     </section>
   </main>
 
-  <footer class="bg-danger text-white text-center py-3 mt-auto shadow-sm">
-    <p class="mb-0">&copy; 2025 Bon Jour Pinoy Restaurant. All rights reserved.</p>
-    <button id="returnToTop" class="btn btn-light mt-3">Return to Top</button>
+  <footer class="bg-danger text-white text-center py-4 mt-auto shadow-sm">
+    <div class="container px-4">
+      <p class="mb-0 small">&copy; 2025 Bon Jour Pinoy Restaurant. <br class="d-sm-none"> All rights reserved.</p>
+    </div>
   </footer>
 
 
@@ -407,12 +399,9 @@
     <button onclick="closeAlert()">Close</button>
   </div>
 
-  <div id="customLoading" class="custom-loading">
-    <p>Loading, please wait...</p>
-    <div class="loading"></div>
-  </div>
   <script src="../js/cart.js" defer></script>
   <script src="../js/foodmenu.js" defer></script>
+  <script src="../js/auth-utils.js" defer></script>
   <script>  
     document.addEventListener('DOMContentLoaded', () => {      // Scroll to menu section when 'View Our Menu' button is clicked
       const viewMenuBtn = document.getElementById('viewMenuBtn');

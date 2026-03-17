@@ -13,6 +13,13 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="../css/styles.css" />
   <link rel="stylesheet" href="../css/cart.css" />
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/firebase-bridge.js"></script>
 </head>
 
 <body class="d-flex flex-column min-vh-100 text-dark">
@@ -23,9 +30,9 @@
           <img src="../assets/logo.svg" alt="Bon Jour Pinoy Restaurant Logo" id="logo" />
           <span class="restaurant-name ms-2 fw-bold">BON JOUR PINOY RESTAURANT™</span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
           aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+          <i class="fas fa-bars text-white"></i>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
@@ -53,28 +60,36 @@
     </section>
   </main>
 
-  <footer class="bg-danger text-white text-center py-3 mt-auto shadow-sm">
-    <p class="mb-0">&copy; 2025 Bon Jour Pinoy Restaurant. All rights reserved.</p>
+  <footer class="bg-danger text-white text-center py-4 mt-auto shadow-sm">
+    <div class="container px-4">
+      <p class="mb-0 small">&copy; 2025 Bon Jour Pinoy Restaurant. <br class="d-sm-none"> All rights reserved.</p>
+    </div>
   </footer>
 
-  <div id="customLoading" style="display:none;">
-    <div class="loading"></div>
+
+  <!-- Login Required Modal -->
+  <div class="modal fade" id="authRequiredModal" tabindex="-1" aria-labelledby="authRequiredModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="authRequiredModalLabel">Authentication Required</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Please log in or sign up to proceed with your order. This helps us track your delivery and provide a better experience!</p>
+        </div>
+        <div class="modal-footer">
+          <a href="login.html" class="btn btn-outline-danger">Log In / Sign Up</a>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Later</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="alert-container">
-    <div class="alert-header">
-      <span class="alert-title"></span>
-      <button class="alert-close">&times;</button>
-    </div>
-    <div class="alert-message"></div>
-    <div class="alert-buttons"></div>
-  </div>
 
   <!-- Bootstrap JS Bundle CDN (includes Popper) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Supabase JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="../js/supabase.js"></script>
+  <script src="../js/auth-utils.js" defer></script>
   <script src="../js/foodmenu.js"></script>
   <script src="../js/cart.js"></script>
 </body>
