@@ -67,17 +67,35 @@ const FirebaseBridge = {
 
   // Initialize Auth Sync
   init() {
-    firebase.auth().onAuthStateChanged(async (user) => {
-      if (user) {
-        console.log("User logged in, syncing from Firebase...");
-        const cart = await this.pullCartFromFirebase();
-        // Update UI if on cart page
-        if (window.updateCartPopup) window.updateCartPopup();
-        if (window.renderCartPageItems) window.renderCartPageItems();
-      } else {
-        console.log("No user session, using LocalStorage only.");
-      }
-    });
+    // Persist auth state across browser sessions to prevent anonymous spam
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        firebase.auth().onAuthStateChanged(async (user) => {
+          if (user) {
+            console.log("Logged in as:", user.isAnonymous ? `Anonymous Guest (${user.uid})` : user.email);
+            
+            // Update session cookie for middleware
+            document.cookie = "resto_session=true; path=/; max-age=86400; SameSite=Lax";
+            
+            const cart = await this.pullCartFromFirebase();
+            // Update UI if on cart page
+            if (window.updateCartPopup) window.updateCartPopup();
+            if (window.renderCartPageItems) window.renderCartPageItems();
+          } else {
+            console.log("No user session. Signing in anonymously to track guest activity...");
+            try {
+              await firebase.auth().signInAnonymously();
+            } catch (error) {
+              console.error("Anonymous Sign-In Error:", error);
+              // Fallback to local only if auth fails
+              document.cookie = "resto_session=guest; path=/; max-age=86400; SameSite=Lax";
+            }
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Auth persistence error:", error);
+      });
   }
 };
 

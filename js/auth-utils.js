@@ -5,10 +5,13 @@
 
 function updateNav() {
   const session = document.cookie.split('; ').find(row => row.startsWith('resto_session='));
+  const sessionValue = session ? session.split('=')[1] : null;
   const loginLinks = document.querySelectorAll('a[href*="login.html"]');
+  const isAnonymous = typeof firebase !== 'undefined' && firebase.auth().currentUser && firebase.auth().currentUser.isAnonymous;
 
   loginLinks.forEach(link => {
-    if (session) {
+    if (sessionValue === 'true' && !isAnonymous) {
+      // Full authenticated user
       link.textContent = 'Log Out';
       link.href = '#';
       link.onclick = (e) => {
@@ -16,6 +19,7 @@ function updateNav() {
         signOut();
       };
     } else {
+      // Guest (anonymous or no session)
       link.textContent = 'Log In';
     }
   });

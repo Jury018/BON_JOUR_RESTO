@@ -1,4 +1,5 @@
 const { db } = require('./lib/firebase');
+const logger = require('./lib/logger');
 
 module.exports = async (req, res) => {
   // Add CORS headers
@@ -20,15 +21,27 @@ module.exports = async (req, res) => {
   }
 
   try {
+    logger.log('Fetching menu items from Firestore...');
     const snapshot = await db.collection('menu').get();
+    
+    if (snapshot.empty) {
+      logger.log('No menu items found in Firestore.');
+      return res.status(200).json([]);
+    }
+
     const menu = [];
     snapshot.forEach(doc => {
       menu.push({ id: doc.id, ...doc.data() });
     });
 
+    logger.log(`Successfully fetched ${menu.length} menu items.`);
     res.status(200).json(menu);
   } catch (error) {
-    console.error('API Menu Error:', error);
-    res.status(500).json({ error: 'Failed to fetch menu' });
+    logger.error('API Menu Error Details:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code
+    });
+    res.status(500).json({ error: 'Failed to fetch menu', details: error.message });
   }
 };

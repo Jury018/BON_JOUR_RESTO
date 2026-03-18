@@ -6,6 +6,14 @@ async function loadMenu() {
     'DRINKS': document.querySelector('#menu .menu-category:nth-of-type(4) .menu-container')
   };
 
+  // Save original hardcoded HTML as fallback before replacing with skeletons
+  const originalContent = {};
+  Object.entries(categories).forEach(([key, container]) => {
+    if (container) {
+      originalContent[key] = container.innerHTML;
+    }
+  });
+
   // Show Skeletons
   Object.values(categories).forEach(container => {
     if (container) {
@@ -28,6 +36,17 @@ async function loadMenu() {
     const response = await fetch('/api/menu');
     if (!response.ok) throw new Error('Failed to fetch menu');
     const menuItems = await response.json();
+
+    // If API returns empty array, fall back to hardcoded items
+    if (!menuItems || menuItems.length === 0) {
+      console.warn('API returned empty menu, using hardcoded fallback.');
+      Object.entries(categories).forEach(([key, container]) => {
+        if (container && originalContent[key]) {
+          container.innerHTML = originalContent[key];
+        }
+      });
+      return;
+    }
 
     // Clear skeletons
     Object.values(categories).forEach(container => {
@@ -54,15 +73,19 @@ async function loadMenu() {
       }
     });
 
-    console.log('Menu loaded with skeleton preloader');
+    console.log('Menu loaded dynamically from API');
   } catch (error) {
     console.error('Error loading menu:', error);
-    // Remove skeletons on error
-    Object.values(categories).forEach(container => {
-      if (container) container.innerHTML = '<p class="text-center w-100">Failed to load menu. Please try again.</p>';
+    // Restore original hardcoded content as fallback instead of showing error
+    Object.entries(categories).forEach(([key, container]) => {
+      if (container && originalContent[key]) {
+        container.innerHTML = originalContent[key];
+      }
     });
+    console.log('Restored hardcoded menu as fallback.');
   }
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
   loadMenu();

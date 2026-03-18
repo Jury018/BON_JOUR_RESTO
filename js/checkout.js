@@ -127,30 +127,38 @@ document.addEventListener('DOMContentLoaded', () => {
     if (customLoading) customLoading.style.display = 'flex';
     payNowButton.disabled = true;
 
-    // Collect order details
-    const orderDetails = {
-      customer: {
-        firstName: document.getElementById('firstName').value.trim(),
-        lastName: document.getElementById('lastName').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        phone: document.getElementById('phoneNumber').value.trim(),
-        address: document.getElementById('address').value.trim(),
-        city: document.getElementById('city').value.trim(),
-        postalCode: document.getElementById('postalCode').value.trim()
-      },
-      payment: {
-        method: document.querySelector('input[name="pay"]:checked')?.nextElementSibling?.textContent.trim() || '',
-        couponCode: couponCodeInput.value.trim()
-      },
-      items: cartItems,
-      totalAmount: parseFloat(totalAmountInput.value.replace('₱','').trim()),
-      userId: JSON.parse(localStorage.getItem('resto_user') || '{}').uid || 'guest'
-    };
-
     try {
+      // ─── Get Firebase ID Token for server-side verification ───
+      const user = typeof firebase !== 'undefined' && firebase.auth().currentUser;
+      if (!user) {
+        throw new Error('You must be signed in to place an order. Please refresh the page.');
+      }
+      const idToken = await user.getIdToken();
+
+      // Collect order details (no userId/isGuest — server extracts from token)
+      const orderDetails = {
+        customer: {
+          firstName: document.getElementById('firstName').value.trim(),
+          lastName: document.getElementById('lastName').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          phone: document.getElementById('phoneNumber').value.trim(),
+          address: document.getElementById('address').value.trim(),
+          city: document.getElementById('city').value.trim(),
+          postalCode: document.getElementById('postalCode').value.trim()
+        },
+        payment: {
+          method: document.querySelector('input[name="pay"]:checked')?.nextElementSibling?.textContent.trim() || '',
+          couponCode: couponCodeInput.value.trim()
+        },
+        items: cartItems
+      };
+
       const response = await fetch('/api/order', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`
+        },
         body: JSON.stringify(orderDetails)
       });
 

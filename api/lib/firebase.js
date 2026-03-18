@@ -28,9 +28,9 @@ if (!admin.apps.length) {
         credential: admin.credential.cert(serviceAccount)
       });
     }
-    console.log('Firebase Admin initialized');
+    if (process.env.VERCEL_ENV !== 'production') console.log('Firebase Admin initialized');
   } catch (error) {
-    console.error('Firebase Admin initialization error:', error.stack);
+    console.error('Firebase Admin initialization error:', error.stack); // Always log init errors
   }
 }
 

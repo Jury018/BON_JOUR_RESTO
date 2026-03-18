@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     labels.forEach(label => label.classList.remove('selected'));
   });
 
-  // Form submission (Connect to API)
+  // Form submission (Connect to API with secure token)
   ratingForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const selectedRating = ratingForm.querySelector('input[name="rating"]:checked');
@@ -71,24 +71,36 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const userData = JSON.parse(localStorage.getItem('resto_user') || '{}');
-    const reviewData = {
-      rating: parseInt(selectedRating.value),
-      comment: commentBox.value.trim(),
-      userId: userData.uid || 'guest',
-      userName: userData.displayName || 'Anonymous'
-    };
-
     submitBtn.disabled = true;
 
     try {
+      // Get Firebase ID Token for server-side verification
+      const user = typeof firebase !== 'undefined' && firebase.auth().currentUser;
+      if (!user) {
+        throw new Error('You must be signed in to submit a rating. Please refresh the page.');
+      }
+      const idToken = await user.getIdToken();
+
+      const userData = JSON.parse(localStorage.getItem('resto_user') || '{}');
+      const reviewData = {
+        rating: parseInt(selectedRating.value),
+        comment: commentBox.value.trim(),
+        userName: userData.displayName || (user.isAnonymous ? 'Guest' : 'User')
+      };
+
       const response = await fetch('/api/rating', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`
+        },
         body: JSON.stringify(reviewData)
       });
 
-      if (!response.ok) throw new Error('Failed to submit rating');
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.error || 'Failed to submit rating');
+      }
 
       // Show toast notification
       ratingToast.show();
@@ -104,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } catch (error) {
       console.error('Rating Error:', error);
-      alert('Failed to submit feedback. Please try again later.');
+      alert('Failed to submit feedback: ' + error.message);
       submitBtn.disabled = false;
     }
   });
