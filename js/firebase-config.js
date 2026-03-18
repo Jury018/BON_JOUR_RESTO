@@ -1,6 +1,6 @@
 const firebaseConfig = {
   apiKey: "AIzaSyB3WepVTRUMKtjBpdUGrB8XfMve-ZUCjWs",
-  authDomain: "bonjour.base69.studio",
+  authDomain: "bon-jour-base.firebaseapp.com",
   databaseURL: "https://bon-jour-base-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "bon-jour-base",
   storageBucket: "bon-jour-base.appspot.com",
