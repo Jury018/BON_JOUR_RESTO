@@ -22,7 +22,7 @@
   <header>
     <nav class="navbar navbar-expand-lg navbar-danger bg-danger text-white shadow-sm" aria-label="Main Navigation">
       <div class="container">
-        <a class="navbar-brand d-flex align-items-center text-white" href="../index.html">
+        <a class="navbar-brand d-flex align-items-center text-white" href="/">
           <img src="../assets/logo.svg" alt="Logo" id="logo" />
           <span class="restaurant-name ms-2 fw-bold">BON JOUR PINOY RESTAURANT™</span>
         </a>
@@ -32,70 +32,81 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link text-white" href="../index.html">Home</a></li>
-            <li class="nav-item"><a class="nav-link text-white active" aria-current="page" href="aboutme.html">About Me</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="foodmenu.html">Food Menu</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="cart.html">My Cart</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="login.html">Log In</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link text-white active" aria-current="page" href="/html/aboutme">About Me</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/html/foodmenu">Food Menu</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/html/cart">My Cart</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/html/login">Log In</a></li>
           </ul>
         </div>
       </div>
     </nav>
   </header>
 
-  <main>
-    <section id="about-me">
+  <main class="flex-grow-1">
+    <section id="about-me" class="container">
+      <!-- Section 1: The Vision -->
       <article>
-        <h2>About Us</h2>
-        <div style="display: flex; justify-content: center; align-items: center; gap: 0px; margin-bottom: 0px;">
-          <div class="aboutme-img-row">
-            <img src="../assets/undraw_best-place_dhzp.svg" alt="3D Store Illustration 1" class="aboutme-img" />
-            <img src="../assets/undraw_best-place_dhzp.svg" alt="3D Store Illustration 3" class="aboutme-img" />
-          </div>
+        <h2 class="display-6 mb-4">A Culinary Vision</h2>
+        <div class="hero-image-container mb-5">
+          <img src="/assets/bonfire_home_interior.png" alt="Bonfire Base Home Interior" class="aboutme-hero-img img-fluid rounded-4 shadow-lg" loading="lazy" />
         </div>
-        <p>Welcome to Bon Jour Pinoy Restaurant <i>a virtual restaurant website page created by Bon Jury Pecaoco, an
-            experienced frontend developer. This website was developed as a showcase and for future inspiration. Please
-            note that all content here is fictional and is not intended for real-world application.</i></p>
+        <p class="lead text-muted">
+          Welcome to <span class="text-danger fw-bold">Bon Jour Pinoy Restaurant</span>, a premium digital sanctuary curated by <span class="text-dark fw-bold">Bon Jury Pecaoco</span>. 
+          What began as a demonstration of high-end frontend architecture has evolved into a tribute to Filipino heritage, designed to inspire the next generation of creators.
+        </p>
+        <p class="text-muted small italic">
+          *Note: This platform serves as a high-performance demonstration of modern web engineering and creative design.
+        </p>
       </article>
 
+      <!-- Section 2: The Journey -->
       <article>
-        <h3>My Journey</h3>
-        <p>My journey started with a simple mission: to build a first working website that demonstrates how innovative
-          solutions can empower individuals and businesses to grow.</p>
-        <p>This project is dedicated to inspiring those with limited resources but who are passionate about entering the
-          world of programming. Using only a modest setup, I want to show that with commitment and determination, you can
-          achieve anything you set your mind to.</p>
-
-          <p>As of July 2025 I decide to update this website as a fully working website that can be use if needed by small to
-            medium size business. I am proud to say that this website is fully functional and can be used for real-world applications.
+        <h3 class="h2 mb-4">The Android Genesis</h3>
+        <p>
+          Great things often have humble beginnings. This entire platform was architected and built entirely on an <span class="fw-bold text-danger">Android device</span>. 
+          It stands as a testament to the fact that commitment and determination far outweigh the limitations of one's tools.
+        </p>
+        <div class="achievement-card">
+          <h3 class="mb-3"><i class="fas fa-trophy me-2"></i> Engineering Milestone</h3>
+          <p class="mb-0">
+            In just 30 days of solo development, I orchestrated a full-stack ecosystem entirely on a mobile setup. 
+            This involved over <span class="fw-bold">3,600+ lines of code</span> and nearly <span class="fw-bold">150 production commits</span>, 
+            bridging the gap between raw passion and professional execution.
           </p>
-           </article>
-
-      <article>
-        <h3>Looking Ahead</h3>
-        <p>Whether you’re here to visit, leave feedback, or simply explore, I’m always open to new ideas that could
-          further enhance this website’s functionality in the tech world.</p>
-        <p>As I continue my journey as a developer, I am eager to grow my skills, particularly in the future.</p>
-           <h3>Achievements</h3>
-           <p>In a 1 month (September to October) of solo development, I built a full-stack restaurant website entirely on an Android phone. This involved significant code changes with only 1 author (3,691 additions, 1,179 deletions across 58 files) and frequent commits (147 to main) while learning frontend and backend technologies, including Firebase integration. This accomplishment highlights my rapid learning, problem-solving, and dedication to delivering a functional website despite limited resources.
-           </p>
-          
-        <p>You can explore my website for more projects and deployments <a
-            href="https://www.bonfire.base69.me"
-            onclick="showLoading(event)">Portfolio</a>.</p>
+        </div>
+        <p class="mt-4">
+          As of July 2025, this platform has transitioned into a fully functional business solution, capable of empowering small to medium-sized enterprises with state-of-the-art digital infrastructure.
+        </p>
       </article>
 
-      <aside>
-        <h3>Get in Touch!</h3>
-        <p>I'm always happy to connect with fellow developers and tech enthusiasts. Feel free to reach out via:</p>
-        <ul>
-          <li><strong>Email:</strong> bonfirebase69@gmail.com</li>
+      <!-- Section 3: Future Horizon -->
+      <article>
+        <h3 class="h2 mb-4">The Future Horizon</h3>
+        <p>
+          The journey of excellence is never-ending. We are constantly exploring frontier technologies to further enhance the interaction between heritage and innovation. 
+          Whether it is through advanced backend integration or hyper-responsive UI patterns, the goal remains the same: <span class="text-danger fw-bold">Impact.</span>
+        </p>
+        <div class="d-grid gap-3 d-sm-flex justify-content-start mt-4">
+          <a href="https://bonfire.base69.studio" class="btn btn-danger btn-lg px-5 rounded-pill shadow-lg hover-lift" target="_blank">
+            Visit BONFIRE BASE <i class="fas fa-rocket ms-2"></i>
+          </a>
+        </div>
+      </article>
 
+      <!-- Contact Section -->
+      <aside class="mb-5">
+        <h3 class="h4">Connect With Me</h3>
+        <p class="text-muted">I am always open to discussing new opportunities, creative ideas, or collaborative efforts.</p>
+        <ul class="mb-0">
+          <li><i class="fas fa-envelope me-2"></i> bonfirebase69@gmail.com</li>
         </ul>
       </aside>
     </section>
 
-    <button onclick="topFunction()" id="myBtn" title="Go to top">Back to Top</button>
+    <button onclick="topFunction()" id="myBtn" title="Go to top" class="shadow-lg">
+      <i class="fas fa-chevron-up"></i>
+    </button>
   </main>
 
   <div id="customAlert" class="custom-alert" style="display: none;">

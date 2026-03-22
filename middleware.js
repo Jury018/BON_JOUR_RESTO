@@ -4,14 +4,14 @@ export default function middleware(request) {
 
  
   const guestPaths = [
-    '/html/foodmenu.html',
-    '/html/cart.html'
+    '/html/foodmenu',
+    '/html/cart'
   ];
 
  
   const fullAuthPaths = [
-    '/html/checkout.html',
-    '/html/rating.html'
+    '/html/checkout',
+    '/html/rating'
   ];
 
   const isGuestPath = guestPaths.some(path => pathname.endsWith(path));
@@ -24,12 +24,12 @@ export default function middleware(request) {
 
     if (!sessionValue) {
       // No session at all, redirect to login
-      return Response.redirect(new URL('/html/login.html', request.url));
+      return Response.redirect(new URL('/html/login', request.url));
     }
 
     if (isFullAuthPath && sessionValue !== 'true') {
       // Guest trying to access checkout/rating, redirect to login
-      return Response.redirect(new URL('/html/login.html', request.url));
+      return Response.redirect(new URL('/html/login', request.url));
     }
   }
 

@@ -153,13 +153,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const href = link.getAttribute('href');
       
       // Allow navigation to Home unconditionally
-      if (href && href.includes('index.html')) {
+      if (href && (href === '/' || href.includes('index'))) {
         return;
       }
       
       if (cart.length === 0) {
         // Specifically check if they are trying to go to the cart or other protected pages
-        if (href && (href.includes('cart.html') || href.includes('checkout.html') || href.includes('rating.html'))) {
+        if (href && (href.includes('cart') || href.includes('checkout') || href.includes('rating'))) {
           e.preventDefault();
           const modalHtml = `
             <div class="modal fade" id="emptyCartModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">

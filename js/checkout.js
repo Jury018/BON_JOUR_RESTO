@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Back to cart button
   backToCartButton.addEventListener('click', () => {
-    window.location.href = 'cart.html';
+    window.location.href = '/html/cart';
   });
 
   // Form validation and submission
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const modalElement = document.getElementById('thankYouModal');
       modalElement.addEventListener('hidden.bs.modal', () => {
         sessionStorage.setItem('canRate', '1');
-        window.location.href = 'rating.html';
+        window.location.href = '/html/rating';
       }, { once: true });
 
     } catch (error) {

@@ -103,10 +103,25 @@ async function signIn() {
 
     clearFormFields('signInFormElement');
     setTimeout(() => {
-      window.location.href = 'foodmenu.html';
+      window.location.href = '/html/foodmenu';
     }, 1200);
   } catch (error) {
-    showSmartModal({title: 'Sign In Error', message: error.message, type: 'error'});
+    let message = error.message;
+    if (error.code === 'auth/user-not-found') {
+      message = "We couldn't find an account with this email. Would you like to create one?";
+      showSmartModal({
+        title: 'Account Not Found', 
+        message: message, 
+        type: 'info'
+      });
+      // Optionally switch to sign up after a delay
+      setTimeout(showSignUp, 3000);
+    } else if (error.code === 'auth/wrong-password') {
+      message = "Incorrect password. Please try again or reset your password.";
+      showSmartModal({title: 'Sign In Error', message: message, type: 'error'});
+    } else {
+      showSmartModal({title: 'Sign In Error', message: message, type: 'error'});
+    }
   }
 }
 
@@ -140,7 +155,14 @@ async function signUp() {
     clearFormFields('signUpFormElement');
     showSignIn(); // Switch to sign in form
   } catch (error) {
-    showSmartModal({title: 'Sign Up Error', message: error.message, type: 'error'});
+    let message = error.message;
+    if (error.code === 'auth/email-already-in-use') {
+      message = "This email is already registered. Try signing in instead.";
+      showSmartModal({title: 'Account Exists', message: message, type: 'info'});
+      setTimeout(showSignIn, 3000);
+    } else {
+      showSmartModal({title: 'Sign Up Error', message: message, type: 'error'});
+    }
   }
 }
 
@@ -156,7 +178,7 @@ async function signOut() {
     
     showSmartModal({title: 'Sign Out', message: 'You have been signed out.', type: 'info', autoClose: true});
     setTimeout(() => {
-      window.location.href = '../index.html';
+      window.location.href = '/';
     }, 1200);
   } catch (error) {
     showSmartModal({title: 'Sign Out Error', message: error.message, type: 'error'});
@@ -195,10 +217,31 @@ async function signInWithGoogle() {
     document.cookie = "resto_session=true; path=/; max-age=2592000; SameSite=Lax";
 
     setTimeout(() => {
-      window.location.href = 'foodmenu.html';
+      window.location.href = '/html/foodmenu';
     }, 1200);
   } catch (error) {
     showSmartModal({title: 'Google Sign In Error', message: error.message, type: 'error'});
+  }
+}
+
+async function signInWithGuest() {
+  try {
+    const result = await firebase.auth().signInAnonymously();
+    showSmartModal({title: 'Guest Access', message: 'Signed in as a guest! Redirecting...', type: 'info', autoClose: true});
+    
+    localStorage.setItem('resto_user', JSON.stringify({ 
+      isGuest: true,
+      uid: result.user.uid
+    }));
+
+    // Set session cookie for middleware
+    document.cookie = "resto_session=true; path=/; max-age=2592000; SameSite=Lax";
+
+    setTimeout(() => {
+      window.location.href = '/html/foodmenu';
+    }, 1200);
+  } catch (error) {
+    showSmartModal({title: 'Guest Sign In Error', message: error.message, type: 'error'});
   }
 }
 
@@ -214,7 +257,7 @@ function attachEventListeners() {
   });
   document.getElementById('showSignUpBtn')?.addEventListener('click', showSignUp);
   document.getElementById('showSignInBtn')?.addEventListener('click', showSignIn);
-  document.getElementById('backToHomeBtn')?.addEventListener('click', () => window.location.href = '../index.html');
+  document.getElementById('backToHomeBtn')?.addEventListener('click', () => window.location.href = '/');
   document.getElementById('sendPasswordResetBtn')?.addEventListener('click', sendPasswordResetEmail);
   document.getElementById('showSignInPassword')?.addEventListener('click', () => togglePasswordVisibility(['signInPassword']));
   document.getElementById('showSignUpPasswords')?.addEventListener('click', () => togglePasswordVisibility(['signUpPassword', 'confirmPassword']));
@@ -225,8 +268,9 @@ function attachEventListeners() {
     });
   });
   
-  // Re-enable Google sign-in
+  // Re-enable Social sign-ins
   document.getElementById('googleSignInBtn')?.addEventListener('click', signInWithGoogle);
+  document.getElementById('guestSignInBtn')?.addEventListener('click', signInWithGuest);
 }
 
 function showSignUp() {

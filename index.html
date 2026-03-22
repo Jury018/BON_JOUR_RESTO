@@ -49,7 +49,7 @@
   <header>
     <nav class="navbar navbar-expand-lg navbar-danger bg-danger text-white shadow-sm" aria-label="Main Navigation">
       <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <a class="navbar-brand d-flex align-items-center" href="/">
           <img src="assets/logo.svg" alt="Logo" id="logo" />
           <span class="restaurant-name ms-2 fw-bold">BON JOUR PINOY RESTAURANT™</span>
         </a>
@@ -59,12 +59,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.html">Home</a>
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a>
             </li>
-            <li class="nav-item"><a class="nav-link" href="html/aboutme.html">About Me</a></li>
+            <li class="nav-item"><a class="nav-link" href="/html/aboutme">About Me</a></li>
             <li class="nav-item"><a class="nav-link" href="#" id="foodMenuNav">Food Menu</a></li>
-            <li class="nav-item"><a class="nav-link" href="cart.html">My Cart</a></li>
-            <li class="nav-item"><a class="nav-link" href="html/login.html">Log In</a></li>
+            <li class="nav-item"><a class="nav-link" href="/html/cart">My Cart</a></li>
+            <li class="nav-item"><a class="nav-link" href="/html/login">Log In</a></li>
           </ul>
         </div>
       </div>
@@ -80,7 +80,7 @@
           <button type="button" class="btn btn-danger btn-lg px-5 py-3 rounded-pill shadow-lg fw-bold" id="viewMenuBtn">
             Explore Menu <i class="fas fa-utensils ms-2"></i>
           </button>
-          <a href="html/login.html" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-bold">
+          <a href="/html/login" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-bold">
             Sign In
           </a>
         </div>
@@ -402,8 +402,8 @@
           <p class="mb-3">You can browse our menu as a guest, but you'll need to sign up or log in to place an order.</p>
         </div>
         <div class="modal-footer">
-          <a href="html/login.html" class="btn btn-danger">Sign Up / Log In</a>
-          <a href="html/foodmenu.html" class="btn btn-secondary">Continue as Guest</a>
+          <a href="/html/login" class="btn btn-danger">Sign Up / Log In</a>
+          <a href="/html/foodmenu" class="btn btn-secondary">Continue as Guest</a>
         </div>
       </div>
     </div>
@@ -421,7 +421,7 @@
     document.querySelector('#signupGuestModal .btn-secondary')?.addEventListener('click', function (e) {
       e.preventDefault();
       document.cookie = "resto_session=guest; path=/; max-age=86400; SameSite=Lax";
-      window.location.href = 'html/foodmenu.html';
+      window.location.href = '/html/foodmenu';
     });
   </script>
 </body>

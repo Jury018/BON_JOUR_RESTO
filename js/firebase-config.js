@@ -9,7 +9,7 @@ const firebaseConfig = {
   measurementId: "G-CJNHMJF8TJ"
 };
 
-// Initialize Firebase locally for the browser
+
 if (typeof firebase !== 'undefined') {
   firebase.initializeApp(firebaseConfig);
   console.log("Firebase Client-Side initialized");

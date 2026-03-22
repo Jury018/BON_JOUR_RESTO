@@ -76,7 +76,7 @@
   <header>
     <nav class="navbar navbar-expand-lg navbar-danger bg-danger text-white shadow-sm" aria-label="Main Navigation">
       <div class="container">
-        <a class="navbar-brand d-flex align-items-center text-white" href="../index.html">
+        <a class="navbar-brand d-flex align-items-center text-white" href="/">
           <img src="../assets/logo.svg" alt="Logo" id="logo" />
           <span class="restaurant-name ms-2 fw-bold">BON JOUR PINOY RESTAURANT™</span>
         </a>
@@ -86,11 +86,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link text-white" href="../index.html">Home</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="aboutme.html">About Me</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="foodmenu.html">Food Menu</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="cart.html">My Cart</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="login.html">Log In</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/html/aboutme">About Me</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/html/foodmenu">Food Menu</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/html/cart">My Cart</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/html/login">Log In</a></li>
           </ul>
         </div>
       </div>
@@ -157,8 +157,8 @@
     // Prevent user from going back to checkout.html after redirect
     window.addEventListener('pageshow', (event) => {
       if (event.persisted || (window.performance && window.performance.getEntriesByType('navigation')[0].type === 'back_forward')) {
-        if (document.referrer.includes('checkout.html')) {
-          window.location.replace('../index.html');
+        if (document.referrer.includes('checkout')) {
+          window.location.replace('/');
         }
       }
     });

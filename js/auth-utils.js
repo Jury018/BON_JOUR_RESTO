@@ -4,58 +4,59 @@
  */
 
 function updateNav() {
-  const session = document.cookie.split('; ').find(row => row.startsWith('resto_session='));
-  const sessionValue = session ? session.split('=')[1] : null;
-  const loginLinks = document.querySelectorAll('a[href*="login.html"]');
-  const isAnonymous = typeof firebase !== 'undefined' && firebase.auth().currentUser && firebase.auth().currentUser.isAnonymous;
+  if (typeof firebase === 'undefined' || !firebase.auth) {
+    console.warn("Firebase Auth not initialized yet.");
+    return;
+  }
 
-  loginLinks.forEach(link => {
-    if (sessionValue === 'true' && !isAnonymous) {
-      // Full authenticated user
-      link.textContent = 'Log Out';
-      link.href = '#';
-      link.onclick = (e) => {
-        e.preventDefault();
-        signOut();
-      };
-    } else {
-      // Guest (anonymous or no session)
-      link.textContent = 'Log In';
+  // Use onAuthStateChanged for reliable state tracking
+  firebase.auth().onAuthStateChanged((user) => {
+    const session = document.cookie.split('; ').find(row => row.startsWith('resto_session='));
+    const sessionValue = session ? session.split('=')[1] : null;
+    const loginLinks = document.querySelectorAll('a[href*="login"]');
+    
+    const isAuthenticated = user && !user.isAnonymous;
+
+    loginLinks.forEach(link => {
+      if (isAuthenticated || sessionValue === 'true') {
+        // User is logged in
+        link.textContent = 'Log Out';
+        link.href = '#';
+        link.onclick = (e) => {
+          e.preventDefault();
+          signOut();
+        };
+      } else {
+        // User is a guest
+        link.textContent = 'Log In';
+        link.href = '/html/login';
+        link.onclick = null;
+      }
+    });
+
+    // Sync localStorage/Cookies if needed
+    if (user && !user.isAnonymous) {
+      document.cookie = "resto_session=true; path=/; max-age=2592000; SameSite=Lax";
     }
   });
 }
 
 async function signOut() {
   try {
-    // Attempt Firebase signout if available
     if (typeof firebase !== 'undefined' && firebase.auth) {
-      try {
-        await firebase.auth().signOut();
-      } catch (e) {
-        console.warn("Firebase auth not ready for signout");
-      }
+      await firebase.auth().signOut();
     }
     
-    // Clear session data
+    // Clear all session data
     localStorage.removeItem('resto_user');
     localStorage.removeItem('resto_cart');
     document.cookie = "resto_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
     
-    // Redirect logic
-    const isInsideHtmlDir = window.location.pathname.includes('/html/');
-    const homePath = isInsideHtmlDir ? '../index.html' : 'index.html';
-    
-    // Optional: show modal if available
-    if (typeof showSmartModal === 'function') {
-      showSmartModal({title: 'Sign Out', message: 'You have been signed out.', type: 'info', autoClose: true});
-      setTimeout(() => { window.location.href = homePath; }, 1000);
-    } else {
-      window.location.href = homePath;
-    }
+    // Redirect to home
+    window.location.href = '/';
   } catch (error) {
     console.error("Sign out error:", error);
-    const homePath = window.location.pathname.includes('/html/') ? '../index.html' : 'index.html';
-    window.location.href = homePath;
+    window.location.href = '/';
   }
 }
 

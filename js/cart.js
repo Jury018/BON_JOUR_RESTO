@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const cart = JSON.parse(localStorage.getItem('resto_cart') || '[]');
     
     // 2. Redirect if empty on cart page
-    if (cart.length === 0 && window.location.pathname.includes('cart.html')) {
+    if (cart.length === 0 && window.location.pathname.includes('/html/cart')) {
         console.log('Cart is empty, staying on page but prompting menu.');
-        // Optional: window.location.href = 'foodmenu.html';
+        // Optional: window.location.href = '/html/foodmenu';
     }
 
     // 3. Initialize UI Components
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * Floating Cart Icon Logic (Used on Food Menu)
      */
     function initFloatingCart() {
-        if (!window.location.pathname.includes('foodmenu.html')) {
+        if (!window.location.pathname.includes('/html/foodmenu')) {
             console.log('Floating cart icon disabled for this page.');
             return;
         }
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cartIcon.addEventListener('touchstart', startDrag, { passive: false });
 
         document.getElementById('goToCartBtn').addEventListener('click', () => {
-            window.location.href = 'cart.html';
+            window.location.href = '/html/cart';
         });
 
         document.body.appendChild(cartIcon);
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const backBtn = document.getElementById('back-to-menu');
         if (backBtn) {
             backBtn.addEventListener('click', () => {
-                window.location.href = 'foodmenu.html';
+                window.location.href = '/html/foodmenu';
             });
         }
     }
@@ -305,6 +305,6 @@ function proceedToCheckout() {
         const authModal = new bootstrap.Modal(document.getElementById('authRequiredModal'));
         authModal.show();
     } else {
-        window.location.href = 'checkout.html';
+        window.location.href = '/html/checkout';
     }
 }

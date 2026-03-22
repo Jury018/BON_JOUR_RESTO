@@ -31,7 +31,7 @@
   <header>
     <nav class="navbar navbar-expand-lg navbar-danger bg-danger text-white shadow-sm" aria-label="Main Navigation">
       <div class="container">
-        <a class="navbar-brand d-flex align-items-center text-white" href="../index.html">
+        <a class="navbar-brand d-flex align-items-center text-white" href="/">
           <img src="../assets/logo.svg" alt="Logo" id="logo" />
           <span class="restaurant-name ms-2 fw-bold">BON JOUR PINOY RESTAURANT™</span>
         </a>
@@ -41,25 +41,17 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link text-white" href="../index.html">Home</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="aboutme.html">About Me</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="foodmenu.html">Food Menu</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="cart.html">My Cart</a></li>
-            <li class="nav-item"><a class="nav-link text-white active" aria-current="page" href="login.html">Log In</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/html/aboutme">About Me</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/html/foodmenu">Food Menu</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/html/cart">My Cart</a></li>
+            <li class="nav-item"><a class="nav-link text-white active" aria-current="page" href="/html/login">Log In</a></li>
           </ul>
         </div>
       </div>
     </nav>
   </header>
 
-  <button type="button" id="backToHomeBtn" class="btn btn-danger position-fixed top-0 end-0 m-3 rounded-circle shadow pulse-animation" aria-label="Back to Home" title="Back to Home" style="width: 50px; height: 50px; padding: 0;">
-    <i class="fas fa-home fa-lg" style="line-height: 50px;"></i>
-  </button>
-  <script>
-    document.getElementById('backToHomeBtn').addEventListener('click', function() {
-      window.location.href = '../index.html';
-    });
-  </script>
 
   <main role="main" class="flex-grow-1 d-flex justify-content-center align-items-center py-5">
     <div class="auth-container">
@@ -113,9 +105,14 @@
           
           <div class="text-center my-3 text-muted small">OR</div>
           
-          <button type="button" id="googleSignInBtn" class="btn w-100 mb-4 shadow-sm border py-2 d-flex align-items-center justify-content-center">
+          <button type="button" id="googleSignInBtn" class="btn w-100 mb-2 shadow-sm border py-2 d-flex align-items-center justify-content-center">
             <i class="fab fa-google me-2 text-primary"></i>
             Continue with Google
+          </button>
+          
+          <button type="button" id="guestSignInBtn" class="btn w-100 mb-4 shadow-sm border py-2 d-flex align-items-center justify-content-center">
+            <i class="fas fa-user-secret me-2 text-muted"></i>
+            Continue as Guest
           </button>
           
           <p class="text-center mb-0 small text-muted">
